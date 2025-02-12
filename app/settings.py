@@ -11,7 +11,7 @@ SECRET_KEY = 'django-insecure-+6p0smn_=q0-yxbh(8x*hc&_7+h6quu#u=i(%1%(tii*lzpjn5
 DEBUG = True
 
 # Hosts permitidos
-ALLOWED_HOSTS = ['192.168.1.5', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 # 📌 Aplicações registradas
 INSTALLED_APPS = [
@@ -84,6 +84,7 @@ MEDIA_URL = '/media/'  # URL onde os arquivos serão servidos
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Diretório onde os arquivos serão salvos
 
 # 📌 Configuração de arquivos estáticos (CSS, JS, imagens)
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Diretório onde os arquivos estáticos serão coletados
 STATIC_URL = '/static/'
 
 # ✅ Corrigindo erro do STATICFILES_DIRS
