@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Relatório Financeiro - Contratos
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center text-primary fw-bold mb-4">
+        <i class="fas fa-file-contract"></i> Relatório Financeiro - Contratos
+    </h2>
+
+    <!-- Filtro de Ano e Mês -->
+    <form method="GET" action="{% url 'relatorio_financeiro_contrato' %}" class="bg-light p-4 rounded shadow-sm">
+        <div class="row g-3 justify-content-center">
+            <div class="col-md-4 col-sm-6">
+                <label for="ano" class="form-label fw-bold">📅 Selecione o Ano:</label>
+                <select class="form-select" name="ano" id="ano">
+                    {% for ano in anos %}
+                        <option value="{{ ano.year }}" {% if ano.year == ano_selecionado %}selected{% endif %}>
+                            {{ ano.year }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <label for="mes" class="form-label fw-bold">📆 Selecione o Mês:</label>
+                <select class="form-select" name="mes" id="mes">
+                    {% for mes, nome in meses %}
+                        <option value="{{ mes }}" {% if mes == mes_selecionado %}selected{% endif %}>
+                            {{ nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-filter"></i> Filtrar
+                </button>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="button" class="btn btn-secondary w-100" id="limparFiltros">
+                    <i class="fas fa-sync-alt"></i> Limpar Filtros
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Cards de Indicadores Financeiros -->
+<div class="row row-cols-1 row-cols-md-5 g-3 text-center mt-4">
+    <div class="col">
+        <div class="card shadow-lg border-0 text-white bg-primary p-3" style="min-height: 140px;">
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <h5 class="card-title fw-bold"><i class="fas fa-user-check"></i> Com Contrato</h5>
+                <p class="card-text fs-4 fw-semibold">{{ total_com_contrato }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card shadow-lg border-0 text-white bg-info p-3" style="min-height: 140px;">
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <h5 class="card-title fw-bold"><i class="fas fa-clipboard-check"></i> Contratos Finalizados</h5>
+                <p class="card-text fs-4 fw-semibold">{{ total_contrato_finalizado }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card shadow-lg border-0 text-white bg-success p-3" style="min-height: 140px;">
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <h5 class="card-title fw-bold"><i class="fas fa-money-bill-wave"></i> Valor Total</h5>
+                <p class="card-text fs-4 fw-semibold">R$ {{ valor_total|floatformat:2 }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card shadow-lg border-0 text-white bg-danger p-3" style="min-height: 140px;">
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <h5 class="card-title fw-bold"><i class="fas fa-exclamation-circle"></i> Valor Faltante</h5>
+                <p class="card-text fs-4 fw-semibold">R$ {{ valor_faltante|floatformat:2 }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card shadow-lg border-0 text-white bg-warning p-3" style="min-height: 140px;">
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <h5 class="card-title fw-bold"><i class="fas fa-dollar-sign"></i> Valor Pago</h5>
+                <p class="card-text fs-4 fw-semibold">R$ {{ valor_pago|floatformat:2 }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Gráficos -->
+    <div class="row mt-5">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-lg border-0 p-3">
+                <h4 class="fw-bold text-center"><i class="fas fa-chart-bar"></i> Contratos por Mês</h4>
+                <canvas id="graficoContratos"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-lg border-0 p-3">
+                <h4 class="fw-bold text-center"><i class="fas fa-chart-pie"></i> Contratos Finalizados por Mês</h4>
+                <canvas id="graficoContratosFinalizados"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-lg border-0 p-3">
+                <h4 class="fw-bold text-center"><i class="fas fa-chart-line"></i> Valor Total por Mês</h4>
+                <canvas id="graficoValoresTotais"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-lg border-0 p-3">
+                <h4 class="fw-bold text-center"><i class="fas fa-chart-line"></i> Valor Faltante por Mês</h4>
+                <canvas id="graficoValoresFaltantes"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-lg border-0 p-3">
+                <h4 class="fw-bold text-center"><i class="fas fa-chart-line"></i> Valor Pago por Mês</h4>
+                <canvas id="graficoValoresPagos"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("limparFiltros").addEventListener("click", function() {
+            window.location.href = "{% url 'relatorio_financeiro_contrato' %}";
+        });
+
+        const labels = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+        function criarGrafico(id, label, data, cor) {
+            new Chart(document.getElementById(id), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: labels.map((_, i) => data[i + 1] || 0),
+                        borderColor: cor,
+                        backgroundColor: cor.replace('1)', '0.1)'),
+                        borderWidth: 2
+                    }]
+                },
+                options: { responsive: true }
+            });
+        }
+
+        criarGrafico("graficoContratos", "Contratos por Mês", JSON.parse('{{ contratos_json|escapejs }}'), "rgba(0, 123, 255, 1)");
+        criarGrafico("graficoContratosFinalizados", "Contratos Finalizados", JSON.parse('{{ contratos_finalizados_json|escapejs }}'), "rgba(13, 202, 240, 1)");
+        criarGrafico("graficoValoresTotais", "Valor Total", JSON.parse('{{ valores_totais_json|escapejs }}'), "rgba(40, 167, 69, 1)");
+        criarGrafico("graficoValoresFaltantes", "Valor Faltante", JSON.parse('{{ valores_faltantes_json|escapejs }}'), "rgba(220, 53, 69, 1)");
+        criarGrafico("graficoValoresPagos", "Valor Pago", JSON.parse('{{ valores_pagos_json|escapejs }}'), "rgba(255, 193, 7, 1)");
+    });
+</script>
+{% endblock %}

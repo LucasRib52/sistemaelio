@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Editar Cliente
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-primary text-white text-center rounded-top">
+            <h2><i class="fas fa-user-edit"></i> Editar Cliente</h2>
+        </div>
+        <div class="card-body p-4">
+
+            <!-- Exibir mensagens -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-info-circle"></i> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Exibir erros de validação -->
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <strong>Erro ao salvar os dados!</strong>
+                    <ul>
+                        {% for field, errors in form.errors.items %}
+                            <li><strong>{{ field }}</strong>: {{ errors|join:", " }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            <form method="post" class="row g-3 needs-validation" novalidate>
+                {% csrf_token %}
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-primary">Nome Completo</label>
+                    {{ form.name }}
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label fw-bold text-primary">Data de Nascimento</label>
+                    <input type="date" name="d_nasc" class="form-control" value="{{ form.instance.d_nasc|date:'Y-m-d' }}">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-primary">CPF</label>
+                    {{ form.cpf }}
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-primary">RG</label>
+                    {{ form.rg }}
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-primary">Telefone</label>
+                    {{ form.telefone }}
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-primary">Telefone Secundário</label>
+                    {{ form.telefone2 }}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold text-primary">E-mail</label>
+                    {{ form.email }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-primary">Sexo</label>
+                    {{ form.sexo }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-primary">Tipo de Cliente</label>
+                    {{ form.tipo_cliente }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-primary">Estado Civil</label>
+                    {{ form.estado_civil }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-primary">Formação</label>
+                    {{ form.formacao }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-primary">Ocupação</label>
+                    {{ form.ocupacao }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-primary">Ação</label>
+                    {{ form.acao }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-primary">CEP</label>
+                    <div class="input-group">
+                        {{ form.cep }}
+                        <button type="button" id="buscar-cep" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold text-primary">Endereço</label>
+                    {{ form.endereco }}
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label fw-bold text-primary">Número</label>
+                    {{ form.numero }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-primary">Bairro</label>
+                    {{ form.bairro }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-primary">Cidade</label>
+                    {{ form.cidade }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-primary">Estado</label>
+                    {{ form.estado }}
+                </div>
+
+                <!-- Plano de Saúde -->
+                <div class="col-md-4">
+                    <label class="form-label fw-bold text-primary">Possui Plano de Saúde?</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="toggleSwitch"
+                            {% if form.instance.nome_plano %}checked{% endif %}>
+                        <label class="form-check-label" id="toggleLabel" for="toggleSwitch">
+                            {% if form.instance.nome_plano %}ON{% else %}OFF{% endif %}
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mt-3" id="plano-saude-nome" style="display: {% if form.instance.nome_plano %}block{% else %}none{% endif %};">
+                    <label class="form-label fw-bold text-primary">Qual Plano?</label>
+                    {{ form.nome_plano }}
+                </div>
+
+                <div class="col-md-12">
+                    <label class="form-label fw-bold text-primary">Restrições</label>
+                    {{ form.restricao }}
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-primary me-2"><i class="fas fa-save"></i> Salvar Alterações</button>
+                    <a href="{% url 'clientes_list' %}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('buscar-cep').addEventListener('click', function () {
+        let cep = document.getElementById('id_cep').value.replace(/\D/g, '');
+        if (cep.length === 8) {
+            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.erro) {
+                        document.getElementById('id_endereco').value = data.logradouro;
+                        document.getElementById('id_bairro').value = data.bairro;
+                        document.getElementById('id_cidade').value = data.localidade;
+                        document.getElementById('id_estado').value = data.uf;
+                    } else {
+                        alert("CEP não encontrado!");
+                    }
+                })
+                .catch(() => alert("Erro ao consultar o CEP!"));
+        } else {
+            alert("Digite um CEP válido.");
+        }
+    });
+
+    document.getElementById('toggleSwitch').addEventListener('change', function () {
+        const planoSaudeNome = document.getElementById('plano-saude-nome');
+        const label = document.getElementById('toggleLabel');
+
+        if (this.checked) {
+            label.textContent = 'ON';
+            planoSaudeNome.style.display = 'block';
+        } else {
+            label.textContent = 'OFF';
+            planoSaudeNome.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}

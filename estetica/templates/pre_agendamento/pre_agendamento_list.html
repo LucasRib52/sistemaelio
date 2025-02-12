@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">Lista de Pré-Agendamentos</h2>
+        <a href="{% url 'pre_agendamento_create' %}" class="btn btn-success btn-lg shadow-sm">
+            <i class="bi bi-plus-circle"></i> Novo Pré-Agendamento
+        </a>
+    </div>
+
+    <!-- Filtro por nome, procedimento, status e data -->
+    <form method="GET" class="shadow-sm p-2 rounded bg-light mb-4">
+        <div class="row gx-2 align-items-center">
+            <div class="col-lg-2 col-md-3 col-sm-6">
+                <input type="text" name="q" class="form-control form-control-sm" placeholder="Buscar..." value="{{ q }}">
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-6">
+                <select name="procedimento" class="form-control form-control-sm">
+                    <option value="">Procedimentos</option>
+                    {% for procedimento in procedimentos %}
+                        <option value="{{ procedimento.id }}" {% if procedimento.id|stringformat:"s" == request.GET.procedimento %}selected{% endif %}>
+                            {{ procedimento.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-6">
+                <select name="status" class="form-control form-control-sm">
+                    <option value="">Status</option>
+                    <option value="1" {% if request.GET.status == "1" %}selected{% endif %}>Confirmado</option>
+                    <option value="2" {% if request.GET.status == "2" %}selected{% endif %}>Reagendado</option>
+                    <option value="3" {% if request.GET.status == "3" %}selected{% endif %}>Cancelado</option>
+                    <option value="4" {% if request.GET.status == "4" %}selected{% endif %}>Sem Resposta</option>
+                </select>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-6">
+                <input type="text" id="date-filter" name="date_filter" class="form-control form-control-sm" placeholder="Datas..." value="{{ date_filter }}">
+            </div>
+            <div class="col-lg-1 col-md-2 col-sm-6">
+                <button type="submit" class="btn btn-primary btn-sm w-100">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+            <div class="col-lg-1 col-md-2 col-sm-6">
+                <a href="{% url 'pre_agendamento_list' %}" class="btn btn-outline-secondary btn-sm w-100">
+                    <i class="bi bi-x-circle"></i>
+                </a>
+            </div>
+        </div>
+    </form>
+
+    <!-- Tabela de pré-agendamentos -->
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover text-center align-middle">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th>Nome</th>
+                    <th>Celular</th>
+                    <th>Data de Agendamento</th>
+                    <th>Data da Consulta</th>
+                    <th>Horário</th>
+                    <th>Procedimento</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for agendamento in pre_agendamentos %}
+                    <tr>
+                        <td>
+                            <!-- Triângulo de alerta quando Confirmado -->
+                            {% if agendamento.posicao_agendamento == 1 and not agendamento.cliente %}
+                                <div class="alert-triangle position-absolute"></div>
+                            {% endif %}
+                            {{ agendamento.nome }}
+                        </td>
+                        <td>{{ agendamento.celular }}</td>
+                        <td>{{ agendamento.data_agendamento|date:"d/m/Y" }}</td>
+                        <td>{{ agendamento.data_consulta|date:"d/m/Y" }}</td>
+                        <td>{{ agendamento.horario|time:"H:i" }}</td>
+                        <td>{{ agendamento.procedimento.nome }}</td>
+                        <td>
+                            <span class="badge 
+                                {% if agendamento.cliente %} bg-info 
+                                {% elif agendamento.posicao_agendamento == 1 %} bg-success 
+                                {% elif agendamento.posicao_agendamento == 2 %} bg-warning 
+                                {% elif agendamento.posicao_agendamento == 3 %} bg-danger 
+                                {% else %} bg-secondary {% endif %} p-2 fw-bold text-white shadow-sm" 
+                                style="border-radius: 10px;">
+                                {% if agendamento.cliente %}
+                                    <i class="bi bi-person-check-fill"></i> Compareceu
+                                {% else %}
+                                    {{ agendamento.get_posicao_agendamento_display }}
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                {% if agendamento.cliente %}
+                                    <span class="badge bg-success p-2 text-white fw-bold shadow-sm" style="border-radius: 10px;">
+                                        <i class="bi bi-check-circle-fill"></i> Cadastro Confirmado
+                                    </span>
+                                {% else %}
+                                    <a href="{% url 'clientes_create' %}?nome={{ agendamento.nome }}&celular={{ agendamento.celular }}" class="btn btn-danger btn-sm fw-bold create-cadastro-btn {% if agendamento.posicao_agendamento != 1 %}d-none{% endif %}">
+                                        <i class="bi bi-person-plus-fill"></i> Criar Cadastro
+                                    </a>
+                                {% endif %}
+                                <a href="{% url 'pre_agendamento_update' agendamento.pk %}" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <a href="{% url 'pre_agendamento_delete' agendamento.pk %}" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                                {% if not agendamento.cliente %}
+                                    <a href="{% url 'pre_agendamento_update_status' agendamento.pk %}" class="btn btn-info btn-sm">
+                                        <i class="bi bi-arrow-repeat"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center fw-bold text-muted py-3">
+                            Nenhum pré-agendamento encontrado.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+         <!-- Paginação -->
+         <nav aria-label="Navegação de página">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Anterior</span>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Próximo</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Próximo</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- Importação da biblioteca Flatpickr para o calendário -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        flatpickr("#date-filter", {
+            enableTime: false,
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d/m/Y",
+            locale: "pt",
+            mode: "range",
+            weekNumbers: true,
+            defaultDate: "{{ date_filter|safe }}"
+        });
+    });
+</script>
+
+{% endblock %}
+
+<style>
+    .alert-triangle {
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-bottom: 12px solid #f8d7da;
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .create-cadastro-btn {
+        border: 2px solid #ff4757;
+        background-color: #ff6b81;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .create-cadastro-btn:hover {
+        background-color: #ff4757;
+        border-color: #e84118;
+    }
+</style>

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Excluir Atendimento
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Excluir Atendimento</h1>
+    <div class="card shadow-lg border-0">
+        <div class="card-body">
+            <p>Tem certeza que deseja excluir este atendimento?</p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-danger me-2">Excluir</button>
+                    <!-- Alterado para redirecionar para a lista de atendimentos -->
+                    <a href="{% url 'historico_atendimentos_list' %}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

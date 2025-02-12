@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-info text-white text-center">
+            <h2 class="mb-0">Histórico de Pagamentos</h2>
+        </div>
+        <div class="card-body">
+            <h4 class="text-center fw-bold">{{ contrato.cliente }}</h4>
+            <p class="text-center text-muted">Contrato #{{ contrato.id }} - <strong>Valor Total: R$ {{ contrato.valor_total|floatformat:2 }}</strong></p>
+            
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Data do Pagamento</th>
+                            <th>Valor Pago</th>
+                            <th>Comprovante</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pagamento in pagamentos %}
+                        <tr>
+                            <td>{{ pagamento.data_pagamento }}</td>
+                            <td>R$ {{ pagamento.valor|floatformat:2 }}</td>
+                            <td>
+                                {% if pagamento.comprovante %}
+                                    <a href="{{ pagamento.comprovante.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        📄 Ver Comprovante
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted">Sem comprovante</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'editar_pagamento' pagamento.pk %}" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-pencil-square"></i> Editar
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted fw-bold">Nenhum pagamento encontrado.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center mt-3">
+                <a href="{% url 'contrato_plastica_list' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Voltar para Lista
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

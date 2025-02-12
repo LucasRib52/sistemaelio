@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Procedimento{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Título -->
+    <h1 class="text-center mb-4 text-primary fw-bold">Editar Procedimento</h1>
+
+    <!-- Cartão com bordas arredondadas -->
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4">
+
+            <!-- Formulário -->
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Campos do Formulário -->
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
+                        
+                        <!-- Campo de entrada -->
+                        <div class="input-group">
+                            {{ field }}
+                        </div>
+
+                        <!-- Mensagens de erro -->
+                        {% if field.errors %}
+                            <div class="text-danger mt-2 small">
+                                {% for error in field.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <!-- Botão de Submissão -->
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary btn-lg shadow-sm rounded-pill px-5 py-3">
+                        <i class="bi bi-pencil-square"></i> Atualizar Procedimento
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

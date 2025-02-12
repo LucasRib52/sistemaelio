@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Atualizar Pagamento{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4 fw-bold text-primary">Atualizar Pagamento</h1>
+    
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4">
+            <p class="fw-bold">Paciente: {{ historico.cliente }}</p>
+            <p>Procedimento: {{ historico.procedimento.nome }}</p>
+            <p>Profissional: {{ historico.profissional.nome }}</p>
+            <p>Data do Atendimento: {{ historico.atendimento.data|date:"d/m/Y H:i" }}</p>
+            <p>Valor Total: <strong>R$ {{ historico.atendimento.valor_total|floatformat:2 }}</strong></p>
+            <p>Valor Pago: <strong>R$ {{ historico.atendimento.valor_pago|floatformat:2 }}</strong></p>
+            <p>Valor Faltante: <strong class="text-danger">R$ {{ valor_faltante|floatformat:2 }}</strong></p>
+
+            {% if historico.atendimento.valor_total > historico.atendimento.valor_pago %}
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Confirmar Pagamento</button>
+            </form>
+            {% else %}
+            <div class="alert alert-success">Este atendimento já foi totalmente pago.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

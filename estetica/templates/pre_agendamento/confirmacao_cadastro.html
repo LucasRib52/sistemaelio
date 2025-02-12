@@ -1,0 +1,26 @@
+<div id="cadastro-alerta" class="alert alert-warning d-flex align-items-center justify-content-between shadow-sm p-3 rounded" style="display: none;">
+    <div class="d-flex align-items-center">
+        <i class="bi bi-exclamation-circle-fill text-danger fs-4 me-3"></i>
+        <span class="fw-bold text-dark">O cadastro deste cliente ainda não foi finalizado.</span>
+    </div>
+    <a href="{% url 'clientes_create' %}" class="btn btn-outline-danger fw-bold">
+        <i class="bi bi-person-plus-fill"></i> Criar Cadastro
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const statusSelect = document.getElementById("id_posicao_agendamento");
+        const cadastroAlerta = document.getElementById("cadastro-alerta");
+
+        function verificarStatus() {
+            if (statusSelect.value == "1") { // Confirmado
+                cadastroAlerta.style.display = "flex";
+            } else {
+                cadastroAlerta.style.display = "none";
+            }
+        }
+
+        statusSelect.addEventListener("change", verificarStatus);
+        verificarStatus(); // Verifica no carregamento inicial
+    });
+</script>

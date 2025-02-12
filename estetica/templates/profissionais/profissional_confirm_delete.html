@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-danger text-white">
+            <h2 class="mb-0">Excluir Profissional</h2>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">
+                Tem certeza de que deseja excluir o profissional 
+                <strong class="text-dark">{{ object.nome }}</strong>? Esta ação não pode ser desfeita.
+            </p>
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Excluir
+                    </button>
+                    <a href="{% url 'profissional_list' %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left-circle"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

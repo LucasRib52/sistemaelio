@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+
+{% block title %}Histórico de Atendimentos - Plástica{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4 fw-bold text-primary">Histórico de Atendimentos - Plástica</h1>
+    
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header text-white p-4 text-center fw-bold" style="background: linear-gradient(135deg, #6a11cb, #2575fc);">
+            Lista de Atendimentos
+        </div>
+
+        <div class="card-body p-4 bg-light">
+            <!-- Formulário de Filtros -->
+            <form method="get" class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <label for="date-filter" class="form-label fw-semibold text-primary">Período</label>
+                    <input type="text" id="date-filter" name="date_filter" class="form-control shadow-sm" placeholder="Selecione um período..." value="{{ request.GET.date_filter }}">
+                </div>
+
+                <div class="col-md-3">
+                    <label for="status" class="form-label fw-semibold text-primary">Status de Pagamento</label>
+                    <select id="status" name="status" class="form-select shadow-sm">
+                        <option value="">Todos</option>
+                        <option value="pago" {% if request.GET.status == 'pago' %}selected{% endif %}>Pago</option>
+                        <option value="cortesia" {% if request.GET.status == 'cortesia' %}selected{% endif %}>Cortesia</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="contrato" class="form-label fw-semibold text-primary">Contrato</label>
+                    <select id="contrato" name="contrato" class="form-select shadow-sm">
+                        <option value="">Todos</option>
+                        <option value="com_contrato" {% if request.GET.contrato == 'com_contrato' %}selected{% endif %}>Com Contrato</option>
+                        <option value="sem_contrato" {% if request.GET.contrato == 'sem_contrato' %}selected{% endif %}>Sem Contrato</option>
+                        <option value="contrato_cancelado" {% if request.GET.contrato == 'contrato_cancelado' %}selected{% endif %}>Contrato Cancelado</option>
+                        <option value="contrato_finalizado" {% if request.GET.contrato == 'contrato_finalizado' %}selected{% endif %}>Contrato Finalizado</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="q" class="form-label fw-semibold text-primary">Buscar Paciente</label>
+                    <input type="text" id="q" name="q" class="form-control shadow-sm" placeholder="Digite o nome do paciente..." value="{{ request.GET.q }}">
+                </div>
+
+                <div class="col-md-3">
+                    <label for="order_by" class="form-label fw-semibold text-primary">Ordenar por</label>
+                    <select id="order_by" name="order_by" class="form-select shadow-sm">
+                        <option value="">Padrão</option>
+                        <option value="name_asc" {% if request.GET.order_by == 'name_asc' %}selected{% endif %}>Nome (A-Z)</option>
+                        <option value="name_desc" {% if request.GET.order_by == 'name_desc' %}selected{% endif %}>Nome (Z-A)</option>
+                        <option value="date_asc" {% if request.GET.order_by == 'date_asc' %}selected{% endif %}>Data (Mais antigo)</option>
+                        <option value="date_desc" {% if request.GET.order_by == 'date_desc' %}selected{% endif %}>Data (Mais recente)</option>
+                        <option value="price_asc" {% if request.GET.order_by == 'price_asc' %}selected{% endif %}>Valor (Menor primeiro)</option>
+                        <option value="price_desc" {% if request.GET.order_by == 'price_desc' %}selected{% endif %}>Valor (Maior primeiro)</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2 align-self-end">
+                    <button type="submit" class="btn btn-primary w-100 shadow-sm"><i class="bi bi-search"></i> Filtrar</button>
+                </div>
+
+                <div class="col-md-2 align-self-end">
+                    <a href="{% url 'historico_atendimentos_plastica_list' %}" class="btn btn-secondary w-100 shadow-sm"><i class="bi bi-x-circle"></i> Limpar Filtros</a>
+                </div>
+
+                 <!-- 🔹 Botão de Exportação para Excel -->
+                <div class="col-md-2 align-self-end">
+                    <a href="{% url 'exportar_atendimentos_plastica' %}" class="btn btn-success w-100 shadow-sm">
+                        <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+                    </a>
+                </div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle shadow-sm rounded-3">
+                    <thead class="table-primary text-center">
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Procedimento</th>
+                            <th>Data</th>
+                            <th>Valor Pago</th>
+                            <th>Forma de Pagamento</th>
+                            <th>Parcelas</th>
+                            <th>Status de Pagamento</th>
+                            <th>Status do Contrato</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for atendimento in page_obj %}
+                        <tr class="bg-white text-center">
+                            <td class="fw-bold">{{ atendimento.cliente }}</td>
+                            <td>{{ atendimento.atendimento.procedimento }}</td>
+                            <td>{{ atendimento.atendimento.data|date:"d/m/Y H:i" }}</td>
+                            <td>R$ {{ atendimento.preco }}</td>
+
+                            <td>
+                                {% if atendimento.atendimento.forma_pagamento == "Cartão de Crédito" %}
+                                    <span class="badge bg-info text-dark">{{ atendimento.atendimento.forma_pagamento }}</span>
+                                {% elif atendimento.atendimento.forma_pagamento == "Cortesia" %}
+                                    <span class="badge bg-success text-white">{{ atendimento.atendimento.forma_pagamento }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ atendimento.atendimento.forma_pagamento }}</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if atendimento.atendimento.forma_pagamento == "Cartão de Crédito" %}
+                                    {{ atendimento.atendimento.parcelas }}x
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if atendimento.preco > 0 %}
+                                    <span class="badge bg-success">Pago</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Pendente</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% with contrato=atendimento.cliente.contratos_plastica.first %}
+                                    {% if contrato %}
+                                        <span class="badge 
+                                            {% if contrato.status == 2 %} bg-primary 
+                                            {% elif contrato.status == 3 %} bg-success 
+                                            {% elif contrato.status == 4 %} bg-danger 
+                                            {% else %} bg-secondary {% endif %}
+                                            p-2 fw-bold text-white shadow-sm">
+                                            {{ contrato.get_status_display }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-secondary p-2 fw-bold shadow-sm">Sem Contrato</span>
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+
+                            <td>
+                                <a href="{% url 'atendimento_plastica_update' atendimento.pk %}" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </a>
+                                <a href="{% url 'atendimento_plastica_delete' atendimento.pk %}" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash"></i> Excluir
+                                </a>
+                            </td>
+                            
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center fw-bold text-muted">Nenhum atendimento encontrado.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginação -->
+            <div class="card-footer text-center">
+                <nav aria-label="Navegação de página">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Anterior</span>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                                <a class="page-link" href="?{{ request.GET.urlencode }}&page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}">Próxima</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Próxima</span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Importação do Flatpickr -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        flatpickr("#date-filter", {
+            mode: "range",
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d/m/Y",
+            locale: "pt",
+            weekNumbers: true,
+            defaultDate: "{{ request.GET.date_filter|safe }}"
+        });
+    });
+</script>
+
+{% endblock %}

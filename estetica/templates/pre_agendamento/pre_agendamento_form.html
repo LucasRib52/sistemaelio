@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4 text-primary fw-bold">Editar Pré-Agendamento</h2>
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4">
+
+            <!-- Mensagens de erro -->
+            {% if form.errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Erro ao salvar:</strong> Por favor, corrija os erros abaixo.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <ul class="mt-2 mb-0">
+                        {% for field, errors in form.errors.items %}
+                            <li><strong>{{ field|title }}</strong>: {{ errors.0 }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            <!-- Formulário -->
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Campos do formulário -->
+                <div class="row g-3">
+                    {% for field in form %}
+                        <div class="col-md-6">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
+                            <div class="input-group">
+                                {{ field }}
+                            </div>
+                            {% if field.errors %}
+                                <div class="text-danger mt-2 small">
+                                    {% for error in field.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Botões de ação -->
+                <div class="d-flex justify-content-end mt-4">
+                    <a href="{% url 'pre_agendamento_list' %}" class="btn btn-secondary me-2">
+                        <i class="bi bi-arrow-left-circle"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="bi bi-save"></i> Atualizar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Script para formatar celular no padrão brasileiro -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const celularInput = document.getElementById("id_celular");
+
+        celularInput.addEventListener("input", function () {
+            let value = celularInput.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            if (value.length > 10) {
+                celularInput.value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
+            } else if (value.length > 5) {
+                celularInput.value = `(${value.slice(0, 2)}) ${value.slice(2, 6)}-${value.slice(6)}`;
+            } else if (value.length > 2) {
+                celularInput.value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+            } else if (value.length > 0) {
+                celularInput.value = `(${value}`;
+            }
+        });
+    });
+</script>
+
+{% endblock %}

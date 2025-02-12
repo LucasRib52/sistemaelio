@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Detalhes do Cliente
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-gradient bg-info text-white text-center rounded-top">
+            <h2 class="mb-0"><i class="bi bi-eye"></i> Detalhes do Cliente</h2>
+        </div>
+        <div class="card-body p-5">
+            <div class="row gy-4">
+                <div class="col-md-6">
+                    <h5 class="fw-bold text-primary border-bottom pb-2"><i class="bi bi-person-circle me-2"></i> Informações Pessoais</h5>
+                    <ul class="list-group list-group-flush shadow-sm rounded-3">
+                        <li class="list-group-item"><strong>Nome:</strong> {{ cliente.name }}</li>
+                        <li class="list-group-item"><strong>Data de Nascimento:</strong> {{ cliente.d_nasc }}</li>
+                        <li class="list-group-item"><strong>CPF:</strong> {{ cliente.cpf }}</li>
+                        <li class="list-group-item"><strong>RG:</strong> {{ cliente.rg }}</li>
+                        <li class="list-group-item"><strong>Telefone:</strong> {{ cliente.telefone }}</li>
+                        <li class="list-group-item"><strong>Telefone 2:</strong> {{ cliente.telefone2 }}</li>
+                        <li class="list-group-item"><strong>Email:</strong> {{ cliente.email }}</li>
+                        <li class="list-group-item"><strong>Sexo:</strong> {{ cliente.sexo }}</li>
+                        <li class="list-group-item"><strong>Estado Civil:</strong> {{ cliente.estado_civil }}</li>
+                        <li class="list-group-item"><strong>Formação:</strong> {{ cliente.formacao }}</li>
+                        <li class="list-group-item"><strong>Ocupação/Função:</strong> {{ cliente.ocupacao }}</li>
+                    </ul>
+                </div>
+
+                <div class="col-md-6">
+                    <h5 class="fw-bold text-primary border-bottom pb-2"><i class="bi bi-house-door me-2"></i> Endereço</h5>
+                    <ul class="list-group list-group-flush shadow-sm rounded-3">
+                        <li class="list-group-item"><strong>CEP:</strong> {{ cliente.cep }}</li>
+                        <li class="list-group-item"><strong>Endereço:</strong> {{ cliente.endereco }}</li>
+                        <li class="list-group-item"><strong>Número:</strong> {{ cliente.numero }}</li>
+                        <li class="list-group-item"><strong>Complemento:</strong> {{ cliente.complemento }}</li>
+                        <li class="list-group-item"><strong>Bairro:</strong> {{ cliente.bairro }}</li>
+                        <li class="list-group-item"><strong>Cidade:</strong> {{ cliente.cidade }}</li>
+                        <li class="list-group-item"><strong>Estado:</strong> {{ cliente.estado }}</li>
+                        <li class="list-group-item"><strong>Veio através de:</strong> {{ cliente.acao }}</li>
+                    </ul>
+                </div>
+
+                <div class="col-md-12">
+                    <h5 class="fw-bold text-primary border-bottom pb-2"><i class="bi bi-clipboard-check me-2"></i> Plano de Saúde</h5>
+                    <ul class="list-group list-group-flush shadow-sm rounded-3">
+                        <li class="list-group-item">
+                            <strong>Possui Plano de Saúde:</strong> 
+                            {% if cliente.nome_plano %}
+                                <span class="badge bg-success rounded-pill px-3 py-2">Sim</span>
+                            {% else %}
+                                <span class="badge bg-danger rounded-pill px-3 py-2">Não</span>
+                            {% endif %}
+                        </li>
+                        {% if cliente.nome_plano %}
+                        <li class="list-group-item"><strong>Nome do Plano:</strong> {{ cliente.nome_plano }}</li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <div class="col-md-12">
+                    <h5 class="fw-bold text-primary border-bottom pb-2"><i class="bi bi-exclamation-triangle me-2"></i> Restrições</h5>
+                    <ul class="list-group list-group-flush shadow-sm rounded-3">
+                        <li class="list-group-item">{{ cliente.restricao|default:"Nenhuma restrição informada." }}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-5 d-flex justify-content-between">
+                <a href="{% url 'clientes_list' %}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+                <a href="{% url 'cliente_edit' cliente.id %}" class="btn btn-outline-warning btn-lg rounded-pill px-4">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .list-group-item {
+        font-size: 1.1rem;
+        font-weight: 500;
+        background: rgba(0, 0, 0, 0.03);
+        border-left: 5px solid #0dcaf0;
+    }
+
+    .card-header {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-outline-secondary:hover, .btn-outline-warning:hover {
+        transform: scale(1.05);
+        transition: all 0.3s ease-in-out;
+    }
+
+    .bg-gradient {
+        background: linear-gradient(135deg, #0dcaf0, #6610f2);
+    }
+</style>
+
+{% endblock %}

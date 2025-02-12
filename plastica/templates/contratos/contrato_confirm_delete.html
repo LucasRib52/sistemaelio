@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-danger text-white text-center">
+            <h2 class="mb-0">Confirmar Exclusão</h2>
+        </div>
+        <div class="card-body text-center">
+            <p class="fs-5 fw-semibold text-muted">Tem certeza de que deseja excluir este contrato?</p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex justify-content-center gap-3">
+                    <button type="submit" class="btn btn-danger px-4 py-2">
+                        <i class="bi bi-trash"></i> Excluir
+                    </button>
+                    <a href="{% url 'contrato_plastica_list' %}" class="btn btn-secondary px-4 py-2">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

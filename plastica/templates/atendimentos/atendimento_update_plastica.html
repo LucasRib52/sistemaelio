@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Editar Atendimento - Plástica
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10 col-12">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header text-center text-white"
+                     style="background: linear-gradient(135deg, #6a11cb, #2575fc); border-radius: 15px 15px 0 0;">
+                    <h3 class="fw-bold mb-1">Editar Atendimento - Plástica</h3>
+                    <p class="mb-0" style="font-size: 0.9rem;">Altere os dados necessários e clique em "Salvar"</p>
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Cliente -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-primary">Cliente</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                                {{ form.cliente }}
+                            </div>
+                        </div>
+
+                        <!-- Procedimento -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-primary">Procedimento</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-light"><i class="bi bi-clipboard"></i></span>
+                                {{ form.procedimento }}
+                            </div>
+                        </div>
+
+                        <!-- Profissional -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-primary">Profissional</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-light"><i class="bi bi-briefcase"></i></span>
+                                {{ form.profissional }}
+                            </div>
+                        </div>
+
+                        <!-- Data do Atendimento -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-primary">Data do Atendimento</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-light"><i class="bi bi-calendar"></i></span>
+                                {{ form.data }}
+                            </div>
+                        </div>
+
+                        <!-- Valor Pago -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-primary">Valor Pago</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-light">R$</span>
+                                {{ form.valor_pago }}
+                            </div>
+                        </div>
+
+                        <!-- Forma de Pagamento -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-primary">Forma de Pagamento</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-light"><i class="bi bi-credit-card"></i></span>
+                                {{ form.forma_pagamento }}
+                            </div>
+                        </div>
+
+                        <!-- Parcelamento (se for cartão de crédito) -->
+                        <div class="mb-3" id="parcelas_container" style="display: none;">
+                            <label class="form-label fw-bold text-primary">Número de Parcelas</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-light"><i class="bi bi-list-ol"></i></span>
+                                {{ form.parcelas }}
+                            </div>
+                        </div>
+
+                        <!-- Observações -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-primary">Observações</label>
+                            {{ form.descricao }}
+                        </div>
+
+                        <!-- Botões -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'historico_atendimentos_plastica_list' %}"
+                               class="btn btn-outline-secondary fw-bold">Cancelar</a>
+                            <button type="submit" class="btn btn-primary fw-bold shadow">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para exibir o campo de parcelas quando necessário -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function toggleParcelas() {
+            let formaPagamento = document.getElementById("id_forma_pagamento").value;
+            let parcelasContainer = document.getElementById("parcelas_container");
+            let parcelasSelect = document.getElementById("id_parcelas");
+
+            if (formaPagamento === "Cartão de Crédito") {
+                parcelasContainer.style.display = "block";
+            } else {
+                parcelasContainer.style.display = "none";
+                parcelasSelect.value = "1";  // Reseta para 1 se não for cartão de crédito
+            }
+        }
+
+        // Mantém a exibição correta ao carregar a página
+        toggleParcelas();
+        document.getElementById("id_forma_pagamento").addEventListener("change", toggleParcelas);
+    });
+</script>
+
+{% endblock %}

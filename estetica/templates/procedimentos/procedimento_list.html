@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Procedimentos{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4 text-primary">Procedimentos Cadastrados</h1>
+    
+    <!-- Botão para adicionar novo procedimento -->
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{% url 'procedimento_create' %}" class="btn btn-success shadow-sm rounded-pill">
+            <i class="bi bi-plus-circle"></i> Novo Procedimento
+        </a>
+    </div>
+
+    <!-- Tabela de Procedimentos -->
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body">
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Preço Base</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for procedimento in page_obj %}
+                        <tr>
+                            <td>{{ procedimento.nome }}</td>
+                            <td>{{ procedimento.descricao }}</td>
+                            <td>R$ {{ procedimento.preco_base|floatformat:2 }}</td>
+                            <td class="d-flex">
+                                <a href="{% url 'procedimento_update' procedimento.pk %}" class="btn btn-warning btn-sm me-2 rounded-pill">
+                                    <i class="bi bi-pencil-square"></i> Editar
+                                </a>
+                                <a href="{% url 'procedimento_delete' procedimento.pk %}" class="btn btn-danger btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ procedimento.pk }}">
+                                    <i class="bi bi-trash"></i> Excluir
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">Nenhum procedimento cadastrado.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Paginação -->
+        <div class="card-footer text-center">
+            <nav aria-label="Navegação de página">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Anterior</span>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Próxima</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Próxima</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Exclusão -->
+{% for procedimento in page_obj %}
+<div class="modal fade" id="deleteModal-{{ procedimento.pk }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza que deseja excluir o procedimento "{{ procedimento.nome }}"?
+            </div>
+            <div class="modal-footer">
+                <form method="post" action="{% url 'procedimento_delete' procedimento.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

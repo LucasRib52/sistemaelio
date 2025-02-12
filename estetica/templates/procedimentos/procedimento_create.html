@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrar Procedimento{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0" style="border-radius: 15px;">
+                <div class="card-header text-white text-center" style="background-color: #007bff; border-radius: 15px 15px 0 0;">
+                    <h3>Registrar Procedimento</h3>
+                    <p class="mb-0" style="font-size: 14px;">Preencha os dados abaixo para cadastrar um novo procedimento</p>
+                </div>
+                <div class="card-body">
+                    
+                    <!-- Exibir mensagens de erro no topo -->
+                    {% if form.errors %}
+                        <div class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm" role="alert">
+                            <i class="fas fa-exclamation-circle"></i> <strong>Erro ao salvar:</strong> Corrija os campos abaixo.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <ul class="mt-2 mb-0">
+                                {% for field, errors in form.errors.items %}
+                                    <li><strong>{{ field|title }}</strong>: {{ errors.0 }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                    
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="id_nome" class="form-label fw-bold">Nome</label>
+                            {{ form.nome }}
+                            {% if form.nome.errors %}
+                                <div class="text-danger mt-1 small">{{ form.nome.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="id_descricao" class="form-label fw-bold">Descrição</label>
+                            {{ form.descricao }}
+                            {% if form.descricao.errors %}
+                                <div class="text-danger mt-1 small">{{ form.descricao.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="id_preco_base" class="form-label fw-bold">Preço Base</label>
+                            {{ form.preco_base }}
+                            {% if form.preco_base.errors %}
+                                <div class="text-danger mt-1 small">{{ form.preco_base.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary me-2 px-4 py-2">Cadastrar</button>
+                            <a href="{% url 'procedimento_list' %}" class="btn btn-secondary px-4 py-2">Voltar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

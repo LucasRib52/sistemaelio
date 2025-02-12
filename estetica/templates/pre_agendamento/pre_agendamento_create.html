@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-md-12">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white text-center rounded-4">
+                    <h4 class="fw-bold">Cadastrar Pré-Agendamento</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Exibir mensagens de erro no topo -->
+                    {% if form.errors %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Erro ao salvar:</strong> Por favor, corrija os erros abaixo.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <ul class="mt-2 mb-0">
+                                {% for field, errors in form.errors.items %}
+                                    <li><strong>{{ field|title }}</strong>: {{ errors.0 }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="row g-3">
+                            <!-- Nome do Cliente -->
+                            <div class="col-md-6">
+                                <label for="id_nome" class="form-label fw-bold">Nome do Cliente</label>
+                                {{ form.nome }}
+                                {% if form.nome.errors %}
+                                    <div class="text-danger mt-2 small">
+                                        {% for error in form.nome.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Celular -->
+                            <div class="col-md-6">
+                                <label for="id_celular" class="form-label fw-bold">Celular</label>
+                                <input type="text" id="id_celular" name="celular" class="form-control" placeholder="(00) 00000-0000" required>
+                                {% if form.celular.errors %}
+                                    <div class="text-danger mt-2 small">
+                                        {% for error in form.celular.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Data de Agendamento -->
+                            <div class="col-md-6">
+                                <label for="id_data_agendamento" class="form-label fw-bold">Data de Agendamento</label>
+                                {{ form.data_agendamento }}
+                                {% if form.data_agendamento.errors %}
+                                    <div class="text-danger mt-2 small">
+                                        {% for error in form.data_agendamento.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Data da Consulta -->
+                            <div class="col-md-6">
+                                <label for="id_data_consulta" class="form-label fw-bold">Data da Consulta</label>
+                                {{ form.data_consulta }}
+                                {% if form.data_consulta.errors %}
+                                    <div class="text-danger mt-2 small">
+                                        {% for error in form.data_consulta.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Horário -->
+                            <div class="col-md-6">
+                                <label for="id_horario" class="form-label fw-bold">Horário</label>
+                                {{ form.horario }}
+                                {% if form.horario.errors %}
+                                    <div class="text-danger mt-2 small">
+                                        {% for error in form.horario.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Procedimento -->
+                            <div class="mb-3">
+                                <label for="procedimento" class="form-label fw-bold">Procedimento</label>
+                                {{ form.procedimento }}
+                                {% if form.procedimento.errors %}
+                                    <div class="text-danger mt-2 small">
+                                        {% for error in form.procedimento.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Observações -->
+                            <div class="col-12">
+                                <label for="id_observacoes" class="form-label fw-bold">Observações</label>
+                                {{ form.observacoes }}
+                                {% if form.observacoes.errors %}
+                                    <div class="text-danger mt-2 small">
+                                        {% for error in form.observacoes.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Botões de ação -->
+                        <div class="d-flex justify-content-end mt-4">
+                            <a href="{% url 'pre_agendamento_list' %}" class="btn btn-secondary me-2">
+                                <i class="bi bi-arrow-left-circle"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-save"></i> Salvar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Link para voltar à lista -->
+            <div class="text-center mt-3">
+                <a href="{% url 'pre_agendamento_list' %}" class="text-decoration-none">
+                    <i class="bi bi-arrow-left-circle"></i> Voltar à lista de pré-agendamentos
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para formatar celular no padrão brasileiro -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const celularInput = document.getElementById("id_celular");
+
+        celularInput.addEventListener("input", function () {
+            let value = celularInput.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            if (value.length > 10) {
+                celularInput.value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
+            } else if (value.length > 5) {
+                celularInput.value = `(${value.slice(0, 2)}) ${value.slice(2, 6)}-${value.slice(6)}`;
+            } else if (value.length > 2) {
+                celularInput.value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+            } else if (value.length > 0) {
+                celularInput.value = `(${value}`;
+            }
+        });
+    });
+</script>
+
+{% endblock %}

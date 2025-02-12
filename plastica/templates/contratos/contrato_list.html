@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white text-center py-3">
+            <h2 class="mb-0">Lista de Contratos</h2>
+        </div>
+        <div class="card-body">
+
+            <!-- Formulário de Filtro -->
+            <form method="GET" class="row gy-3 gx-3 mb-4 align-items-end">
+                <div class="col-md-3">
+                    <label for="q" class="form-label fw-bold">Buscar por Nome ou Celular:</label>
+                    <input type="text" id="q" name="q" class="form-control" placeholder="Digite o nome ou celular" value="{{ request.GET.q }}">
+                </div>
+                <div class="col-md-2">
+                    <label for="status" class="form-label fw-bold">Filtrar por Status:</label>
+                    <select id="status" name="status" class="form-select">
+                        <option value="">Todos os Status</option>
+                        <option value="1" {% if request.GET.status == "1" %}selected{% endif %}>Sem Contrato</option>
+                        <option value="2" {% if request.GET.status == "2" %}selected{% endif %}>Com Contrato</option>
+                        <option value="3" {% if request.GET.status == "3" %}selected{% endif %}>Contrato Finalizado</option>
+                        <option value="4" {% if request.GET.status == "4" %}selected{% endif %}>Contrato Cancelado</option>
+                    </select>
+                </div>
+
+                <!-- Filtro de Data do Contrato -->
+                <div class="col-md-2">
+                    <label for="data_contrato_range" class="form-label fw-bold">Período do Contrato:</label>
+                    <input type="text" id="data_contrato_range" name="data_contrato_range" class="form-control" placeholder="Selecione um período">
+                </div>
+
+                <!-- Filtro de Data de Validade -->
+                <div class="col-md-2">
+                    <label for="data_validade_range" class="form-label fw-bold">Período de Validade:</label>
+                    <input type="text" id="data_validade_range" name="data_validade_range" class="form-control" placeholder="Selecione um período">
+                </div>
+
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Filtrar
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <a href="{% url 'contrato_plastica_list' %}" class="btn btn-secondary w-100 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-x-circle me-2"></i> Limpar Filtros
+                    </a>
+                </div>
+                 <!-- 🔹 Botão de Exportação para Excel -->
+                <div class="col-md-2 align-self-end">
+                    <a href="{% url 'exportar_contratos_plastica' %}" class="btn btn-success w-100 shadow-sm">
+                        <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+                    </a>
+                </div>
+            </form>
+
+            <!-- Tabela de Contratos -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover text-center align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Celular</th>
+                            <th>Valor Total</th>
+                            <th>Valor Pago</th>
+                            <th>Valor Faltante</th>
+                            <th>Data do Contrato</th>
+                            <th>Data de Validade</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for contrato in contratos %}
+                        <tr>
+                            <td class="fw-semibold">{{ contrato.cliente }}</td>
+                            <td>{{ contrato.celular }}</td>
+                            <td class="fw-bold">R$ {{ contrato.valor_total|default:"0.00" }}</td>
+                            <td class="fw-bold text-success">R$ {{ contrato.total_pago|floatformat:2|default:"0.00" }}</td>
+                            <td class="fw-bold {% if contrato.valor_faltante > 0 %}text-danger{% else %}text-success{% endif %}">
+                                R$ {{ contrato.valor_faltante|floatformat:2|default:"0.00" }}
+                            </td>
+                            <td>{{ contrato.data_contrato|default:"-" }}</td>
+                            <td>{{ contrato.data_validade|default:"-" }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if contrato.status == 1 %} bg-secondary 
+                                    {% elif contrato.status == 2 %} bg-info 
+                                    {% elif contrato.status == 3 %} bg-success 
+                                    {% elif contrato.status == 4 %} bg-danger {% endif %}
+                                    p-2 fw-bold shadow-sm">
+                                    {{ contrato.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center flex-wrap gap-2">
+                                    {% if contrato.status == 1 %}
+                                        <a href="{% url 'contrato_plastica_update' contrato.pk %}" class="btn btn-success btn-sm">
+                                            <i class="bi bi-file-earmark-plus"></i> Criar
+                                        </a>
+                                    {% endif %}
+                                    {% if contrato.status == 2 %}
+                                        <a href="{% url 'pagamento_contrato_create' contrato.pk %}" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-cash"></i> Pagar
+                                        </a>
+                                        <a href="{% url 'historico_pagamentos' contrato.pk %}" class="btn btn-info btn-sm">
+                                            <i class="bi bi-clock-history"></i> Histórico
+                                        </a>
+                                    {% endif %}
+                                    <a href="{% url 'contrato_plastica_update' contrato.pk %}" class="btn btn-warning btn-sm">
+                                        <i class="bi bi-pencil-square"></i> Editar
+                                    </a>
+                                    <a href="{% url 'contrato_plastica_delete' contrato.pk %}" class="btn btn-danger btn-sm">
+                                        <i class="bi bi-trash"></i> Excluir
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center fw-bold text-muted py-3">
+                                Nenhum contrato encontrado.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Paginação -->
+        <nav aria-label="Navegação de página">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Anterior</span>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Próximo</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Próximo</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Importação da biblioteca Flatpickr -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        flatpickr("#data_contrato_range", {
+            mode: "range",
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d/m/Y",
+            locale: "pt",
+            weekNumbers: true,
+            defaultDate: "{{ request.GET.data_contrato_range|safe }}"
+        });
+
+        flatpickr("#data_validade_range", {
+            mode: "range",
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d/m/Y",
+            locale: "pt",
+            weekNumbers: true,
+            defaultDate: "{{ request.GET.data_validade_range|safe }}"
+        });
+    });
+</script>
+
+{% endblock %}

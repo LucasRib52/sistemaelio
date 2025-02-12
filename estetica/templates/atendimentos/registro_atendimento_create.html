@@ -1,0 +1,294 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8 col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="fw-bold">Cadastrar Pré-Agendamento</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <!-- Exibir mensagens de erro no topo -->
+                        {% if form.errors %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Erro ao salvar:</strong> Corrija os campos abaixo.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <ul class="mt-2 mb-0">
+                                {% for field, errors in form.errors.items %}
+                                    <li><strong>{{ field|title }}:</strong> {{ errors|join:", " }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        <!-- Cliente (com autocomplete estilizado) -->
+                        <div class="mb-3">
+                            <label for="id_estetica_cliente" class="form-label fw-bold text-primary">Cliente</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-gradient text-white"
+                                    style="background-color: #0d6efd;">
+                                    <i class="bi bi-person-fill"></i>
+                                </span>
+                                <input type="hidden" id="id_estetica_cliente_id" name="cliente">
+                                <input type="text" id="id_estetica_cliente" name="cliente_nome"
+                                    class="form-control border-0" placeholder="Digite o nome do cliente...">
+                            </div>
+                        </div>
+
+                        <!-- Telefones do cliente -->
+                        <div class="mb-3">
+                            <label for="telefone" class="form-label fw-bold text-primary">Telefone</label>
+                            <input type="text" id="telefone" class="form-control" readonly>
+                        </div>
+
+                        <!-- Procedimento com Autocomplete -->
+                        <div class="mb-3">
+                            <label for="id_estetica_procedimento"
+                                class="form-label fw-bold text-primary">Procedimento</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-light"><i class="bi bi-clipboard"></i></span>
+                                <input type="hidden" id="id_estetica_procedimento_id" name="procedimento">
+                                <input type="text" id="id_estetica_procedimento" name="procedimento_nome"
+                                    class="form-control border-0" placeholder="Digite para buscar o procedimento...">
+                            </div>
+                        </div>
+
+                        <!-- Quantidade de Sessões -->
+                        <div class="mb-3">
+                            <label for="id_quantidade_sessoes" class="form-label fw-bold text-primary">Quantidade de
+                                Sessões</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-light"><i class="bi bi-calendar-check"></i></span>
+                                <input type="number" name="quantidade_sessoes" id="id_quantidade_sessoes"
+                                    class="form-control" min="1" placeholder="Digite a quantidade de sessões"
+                                    value="{{ form.quantidade_sessoes.value|default:1 }}">
+                            </div>
+                        </div>
+
+
+                        <!-- Profissional -->
+                        <div class="mb-3">
+                            <label for="id_estetica_profissional"
+                                class="form-label fw-bold text-primary">Profissional</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-light"><i class="bi bi-briefcase"></i></span>
+                                {{ form.profissional }}
+                            </div>
+                        </div>
+
+                        <!-- Data do Atendimento -->
+                        <div class="mb-3">
+                            <label for="id_estetica_data" class="form-label fw-bold text-primary">Data do
+                                Atendimento</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-light"><i class="bi bi-calendar"></i></span>
+                                {{ form.data }}
+                            </div>
+                        </div>
+
+                        <!-- Valor Total -->
+                        <div class="mb-3">
+                            <label for="id_estetica_valor_total" class="form-label fw-bold text-primary">Valor
+                                Total</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-light">R$</span>
+                                {{ form.valor_total }}
+                            </div>
+                        </div>
+
+                        <!-- Valor Pago -->
+                        <div class="mb-3">
+                            <label for="id_estetica_valor_pago" class="form-label fw-bold text-primary">Valor
+                                Pago</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-light">R$</span>
+                                {{ form.valor_pago }}
+                            </div>
+                        </div>
+
+                        <!-- Forma de Pagamento -->
+                        <div class="mb-3">
+                            <label for="id_estetica_forma_pagamento" class="form-label fw-bold text-primary">Forma de
+                                Pagamento</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-light"><i class="bi bi-credit-card"></i></span>
+                                {{ form.forma_pagamento }}
+                            </div>
+                        </div>
+
+                        <!-- 🆕 Parcelamento (inicialmente escondido) -->
+                        <div class="mb-3" id="parcelas_container" style="display: none;">
+                            <label for="id_parcelas" class="form-label fw-bold text-primary">Número de Parcelas</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-light"><i class="bi bi-list-ol"></i></span>
+                                {{ form.parcelas }}
+                            </div>
+                        </div>
+
+                        <!-- Descrição -->
+                        <div class="mb-3">
+                            <label for="id_estetica_descricao" class="form-label fw-bold text-primary">Descrição</label>
+                            {{ form.descricao }}
+                        </div>
+
+                        <!-- Botões -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'historico_atendimentos_list' %}"
+                                class="btn btn-outline-secondary fw-bold">Cancelar</a>
+                            <button type="submit" class="btn btn-primary fw-bold shadow">Registrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery e jQuery UI para o Autocomplete -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+<!-- Estilização personalizada para autocomplete -->
+<style>
+    .ui-autocomplete {
+        background-color: #ffffff;
+        border: 1px solid #0d6efd;
+        border-radius: 10px;
+        padding: 8px;
+        font-size: 16px;
+        max-height: 300px;
+        overflow-y: auto;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .ui-menu-item {
+        padding: 12px;
+        border-bottom: 1px solid #e0e0e0;
+        cursor: pointer;
+        font-weight: 500;
+        color: #333;
+        transition: all 0.3s ease;
+    }
+
+    .ui-menu-item:hover {
+        background-color: #0d6efd;
+        color: #fff;
+        border-radius: 5px;
+    }
+
+    .ui-state-active {
+        background-color: #0b5ed7 !important;
+        color: #fff !important;
+        font-weight: bold;
+    }
+
+    /* Ajustando posição da lista */
+    .ui-autocomplete {
+        z-index: 1050 !important;
+    }
+</style>
+
+<script>
+    <!-- 🆕 Script para Mostrar/Ocultar Parcelamento -->
+
+    $(document).ready(function () {
+        function toggleParcelas() {
+            let formaPagamento = $("#id_estetica_forma_pagamento").val();
+            if (formaPagamento === "Cartão de Crédito") {
+                $("#parcelas_container").show();
+            } else {
+                $("#parcelas_container").hide();
+                $("#id_parcelas").val("1");  // Define parcelas como 1 se outra opção for selecionada
+            }
+        }
+
+        // Chama a função ao carregar a página e ao mudar a forma de pagamento
+        toggleParcelas();
+        $("#id_estetica_forma_pagamento").change(toggleParcelas);
+    });
+    $(document).ready(function () {
+        // Autocomplete para CLIENTES
+        $("#id_estetica_cliente").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "{% url 'cliente_autocomplete' %}",
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response(data.map(cliente => ({
+                            label: cliente.label,
+                            value: cliente.id,
+                            telefone: cliente.telefone,
+                            telefone2: cliente.telefone2
+                        })));
+                    }
+                });
+            },
+            minLength: 1,
+            select: function (event, ui) {
+                $("#id_estetica_cliente").val(ui.item.label);
+                $("#id_estetica_cliente_id").val(ui.item.value);
+                $("#telefone").val(ui.item.telefone);
+                return false;
+            }
+        }).autocomplete("instance")._renderItem = function (ul, item) {
+            return $("<li>")
+                .append(`
+                    <div>
+                        <strong>${item.label}</strong><br>
+                        <small>Telefone: ${item.telefone}</small><br>
+                        ${item.telefone2 ? `<small>Telefone Secundário: ${item.telefone2}</small>` : ""}
+                    </div>
+                `)
+                .appendTo(ul);
+        };
+
+        // Autocomplete para PROCEDIMENTOS
+        $("#id_estetica_procedimento").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "{% url 'procedimento_autocomplete' %}",
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response(data.map(proc => ({
+                            label: proc.label, // Nome do procedimento
+                            value: proc.id, // ID do procedimento
+                            preco: proc.preco // Preço do procedimento
+                        })));
+                    }
+                });
+            },
+            minLength: 1,
+            select: function (event, ui) {
+                $("#id_estetica_procedimento").val(ui.item.label);
+                $("#id_estetica_procedimento_id").val(ui.item.value);
+                return false;
+            }
+        }).autocomplete("instance")._renderItem = function (ul, item) {
+            return $("<li>")
+                .append(`
+                    <div>
+                        <strong>${item.label}</strong><br>
+                        <small>Preço: R$ ${item.preco}</small>
+                    </div>
+                `)
+                .appendTo(ul);
+        };
+
+        // Restringir campo "Quantidade de Sessões" para aceitar apenas números e garantir que o mínimo seja 1
+        $("#id_quantidade_sessoes").on("input", function () {
+            this.value = this.value.replace(/[^0-9]/g, ''); // Remove qualquer caractere que não seja número
+            if (this.value === "" || parseInt(this.value) < 1) {
+                this.value = 1; // Define o valor mínimo como 1
+            }
+        });
+    });
+</script>
+
+{% endblock %}

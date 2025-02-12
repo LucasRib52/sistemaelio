@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrar Profissional - Cirurgia Plástica{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header text-white text-center py-4" style="background: linear-gradient(135deg, #007BFF, #6610f2); border-radius: 10px 10px 0 0;">
+                    <h2 class="fw-bold mb-0">Cadastro de Profissional</h2>
+                    <p class="mb-0" style="font-size: 15px;">Preencha os dados abaixo corretamente</p>
+                </div>
+                <div class="card-body p-4">
+                    
+                    <!-- Exibir mensagens de erro no topo -->
+                    {% if form.errors %}
+                        <div class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm" role="alert">
+                            <i class="fas fa-exclamation-triangle"></i> <strong>Erro ao salvar:</strong> Corrija os campos abaixo.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <ul class="mt-2 mb-0">
+                                {% for field, errors in form.errors.items %}
+                                    <li><strong>{{ field|title }}</strong>: {{ errors.0 }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
+                    <form method="post" novalidate class="needs-validation">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_nome" class="form-label fw-semibold"><i class="fas fa-user"></i> Nome</label>
+                            <input type="text" name="nome" id="id_nome" class="form-control rounded-3" value="{{ form.nome.value|default:'' }}" required>
+                            {% if form.nome.errors %}
+                                <div class="text-danger mt-1 small">{{ form.nome.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_especialidade" class="form-label fw-semibold"><i class="fas fa-user-md"></i> Especialidade</label>
+                            <input type="text" name="especialidade" id="id_especialidade" class="form-control rounded-3" value="{{ form.especialidade.value|default:'' }}" required>
+                            {% if form.especialidade.errors %}
+                                <div class="text-danger mt-1 small">{{ form.especialidade.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_telefone" class="form-label fw-semibold"><i class="fas fa-phone"></i> Telefone</label>
+                            <input type="text" name="telefone" id="id_telefone" class="form-control rounded-3" maxlength="15" value="{{ form.telefone.value|default:'' }}" required>
+                            {% if form.telefone.errors %}
+                                <div class="text-danger mt-1 small">{{ form.telefone.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label fw-semibold"><i class="fas fa-envelope"></i> Email</label>
+                            <input type="email" name="email" id="id_email" class="form-control rounded-3" value="{{ form.email.value|default:'' }}" required>
+                            {% if form.email.errors %}
+                                <div class="text-danger mt-1 small">{{ form.email.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-check form-switch mb-4">
+                            <input type="checkbox" name="ativo" id="id_ativo" class="form-check-input" {% if form.ativo.value %}checked{% endif %}>
+                            <label for="id_ativo" class="form-check-label">Ativo</label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg shadow-sm rounded-pill"><i class="fas fa-save"></i> Salvar</button>
+                            <a href="{% url 'profissional_plastica_list' %}" class="btn btn-outline-secondary btn-lg shadow-sm rounded-pill"><i class="fas fa-arrow-left"></i> Voltar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('id_telefone').addEventListener('input', function (e) {
+        let telefone = e.target.value.replace(/\D/g, ''); // Remove tudo que não for número
+
+        if (telefone.length > 11) {
+            telefone = telefone.slice(0, 11); // Limita a 11 números
+        }
+
+        if (telefone.length <= 10) {
+            telefone = telefone.replace(/^(\d{2})(\d{4})(\d{0,4})$/, '($1) $2-$3');
+        } else {
+            telefone = telefone.replace(/^(\d{2})(\d{5})(\d{0,4})$/, '($1) $2-$3');
+        }
+
+        e.target.value = telefone;
+    });
+</script>
+
+{% endblock %}

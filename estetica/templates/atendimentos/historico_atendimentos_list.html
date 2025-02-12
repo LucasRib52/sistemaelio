@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block title %}Histórico de Atendimentos{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4 fw-bold text-primary">Histórico de Atendimentos - Estética</h1>
+    
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header text-white p-4 text-center fw-bold" style="background: linear-gradient(135deg, #007bff, #6610f2);">
+            Lista de Atendimentos
+        </div>
+
+        <div class="card-body p-4 bg-light">
+            <form method="get" class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <label for="data" class="form-label fw-semibold text-primary">Data</label>
+                    <input type="date" id="data" name="data" class="form-control shadow-sm" value="{{ request.GET.data }}">
+                </div>
+
+                <div class="col-md-3">
+                    <label for="status" class="form-label fw-semibold text-primary">Status</label>
+                    <select id="status" name="status" class="form-select shadow-sm">
+                        <option value="">Todos os Status</option>
+                        <option value="pago" {% if request.GET.status == 'pago' %}selected{% endif %}>Pago</option>
+                        <option value="pendente" {% if request.GET.status == 'pendente' %}selected{% endif %}>Pendente</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="procedimento" class="form-label fw-semibold text-primary">Procedimento</label>
+                    <select id="procedimento" name="procedimento" class="form-select shadow-sm">
+                        <option value="">Todos os Procedimentos</option>
+                        {% for proc in procedimentos %}
+                        <option value="{{ proc.id }}" {% if request.GET.procedimento|default_if_none:'' == proc.id|stringformat:"s" %}selected{% endif %}>
+                            {{ proc.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="profissional" class="form-label fw-semibold text-primary">Profissional</label>
+                    <select id="profissional" name="profissional" class="form-select shadow-sm">
+                        <option value="">Todos os Profissionais</option>
+                        {% for prof in profissionais %}
+                        <option value="{{ prof.id }}" {% if request.GET.profissional|default_if_none:'' == prof.id|stringformat:"s" %}selected{% endif %}>
+                            {{ prof.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="q" class="form-label fw-semibold text-primary">Buscar Paciente</label>
+                    <input type="text" id="q" name="q" class="form-control shadow-sm" placeholder="Digite o nome do paciente..." value="{{ request.GET.q }}">
+                </div>
+
+                <div class="col-md-2 align-self-end">
+                    <button type="submit" class="btn btn-primary w-100 shadow-sm"><i class="bi bi-search"></i> Filtrar</button>
+                </div>
+
+                <div class="col-md-2 align-self-end">
+                    <a href="{% url 'historico_atendimentos_list' %}" class="btn btn-secondary w-100 shadow-sm"><i class="bi bi-x-circle"></i> Limpar Filtros</a>
+                </div>
+
+                <!-- 🔹 Botão de Exportação para Excel -->
+    <div class="col-md-2 align-self-end">
+        <a href="{% url 'exportar_historico_excel' %}" class="btn btn-success w-100 shadow-sm">
+            <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+        </a>
+    </div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle shadow-sm rounded-3">
+                    <thead class="table-primary text-center">
+                        <tr>
+                            <th>Paciente</th>
+                            <th>CPF</th>
+                            <th>Procedimento</th>
+                            <th>Profissional</th>
+                            <th>Data</th>
+                            <th>Qtd. Sessões</th>
+                            <th>Status</th>
+                            <th>Valor Pago</th>
+                            <th>Valor Faltante</th>
+                            <th>Forma de Pagamento</th>
+                            <th>Parcelas</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for atendimento in page_obj %}
+                        <tr class="bg-white text-center">
+                            <td class="fw-bold">{{ atendimento.cliente }}</td>
+                            <td class="text-muted">{{ atendimento.cliente.cpf }}</td>
+                            <td>{{ atendimento.procedimento.nome }}</td>
+                            <td>{{ atendimento.profissional.nome }}</td>
+                            <td>{{ atendimento.atendimento.data|date:"d/m/Y H:i" }}</td>
+                            <td class="fw-bold text-primary">{{ atendimento.quantidade_sessoes }}</td>
+                            <td>
+                                {% if atendimento.atendimento.valor_pago >= atendimento.atendimento.valor_total %}
+                                <span class="badge bg-success">Pago</span>
+                                {% else %}
+                                <span class="badge bg-danger">Pendente</span>
+                                {% endif %}
+                            </td>
+                            <td>R$ {{ atendimento.atendimento.valor_pago }}</td>
+                            <td>R$ {{ atendimento.valor_faltante|default:0|floatformat:2 }}</td>
+                            <td>{{ atendimento.atendimento.forma_pagamento }}</td>
+                            <td>
+                                {% if atendimento.atendimento.forma_pagamento == "Cartão de Crédito" %}
+                                    {{ atendimento.atendimento.parcelas }}x
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'atendimento_update' atendimento.pk %}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></a>
+                                <!-- Substituído o botão por um link que redireciona para a página de exclusão -->
+                                <a href="{% url 'atendimento_delete' atendimento.pk %}" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+
+                                {% if atendimento.atendimento.valor_pago < atendimento.atendimento.valor_total %}
+                                <a href="{% url 'atendimento_update_payment' atendimento.pk %}" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-cash-stack"></i> Pagar
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="12" class="text-center fw-bold text-muted">Nenhum atendimento encontrado.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginação -->
+            <nav aria-label="Navegação de página">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Anterior</span>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Próximo</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Próximo</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

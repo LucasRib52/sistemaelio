@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Agenda de Pré-Agendamentos de Plástica{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4 fw-bold text-primary">Agenda de Pré-Agendamentos de Plástica</h1>
+    <div id="calendar" class="shadow p-4 bg-white rounded"></div>
+</div>
+
+<!-- Importação do FullCalendar -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/locales/pt-br.js"></script>
+
+<style>
+    .fc-event {
+        border-radius: 8px;
+        color: white;
+        text-align: center;
+    }
+
+    .fc-event.confirmado {
+        background-color: #28a745 !important;
+    }
+
+    .fc-event.reagendado {
+        background-color: #ffc107 !important;
+    }
+
+    .fc-event.desmarcado {
+        background-color: #dc3545 !important;
+    }
+
+    .fc-event.sem-resposta {
+        background-color: #6c757d !important;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'pt-br',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            editable: true,
+            events: function (fetchInfo, successCallback, failureCallback) {
+                fetch("{% url 'pre_agendamento_plastica_calendar' %}", {
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(event => {
+                        let nomeCliente = event.title || "Sem nome";
+                        let horario = event.extendedProps.horario ? event.extendedProps.horario : "Horário não informado";
+                        let procedimento = event.extendedProps.procedimento ? event.extendedProps.procedimento : "Não informado";
+
+                        event.title = `${nomeCliente} - ${procedimento} - ${horario}`;
+
+                        if (event.extendedProps.posicao_agendamento === "Confirmado") {
+                            event.classNames = ['confirmado'];
+                        } else if (event.extendedProps.posicao_agendamento === "Reagendado") {
+                            event.classNames = ['reagendado'];
+                        } else if (event.extendedProps.posicao_agendamento === "Desmarcado") {
+                            event.classNames = ['desmarcado'];
+                        } else {
+                            event.classNames = ['sem-resposta'];
+                        }
+                    });
+                    successCallback(data);
+                })
+                .catch(error => failureCallback(error));
+            },
+        });
+
+        calendar.render();
+    });
+</script>
+
+<!-- SweetAlert2 para modal estilizado -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% endblock %}

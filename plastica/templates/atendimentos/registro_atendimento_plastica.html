@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Registrar Atendimento - Plástica
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8 col-12">
+            <div class="card shadow border-0" style="border-radius: 15px;">
+                <div class="card-header text-center text-white"
+                     style="background: linear-gradient(135deg, #6a11cb, #2575fc); border-radius: 15px 15px 0 0;">
+                    <h3 class="fw-bold mb-1">Registrar Atendimento - Plástica</h3>
+                    <p class="mb-0" style="font-size: 0.9rem;">Preencha os dados abaixo para prosseguir</p>
+                </div>
+                <div class="card-body p-4">
+
+                    <!-- Exibir mensagens de erro no topo -->
+                    {% if form.errors %}
+                        <div class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm" role="alert">
+                            <i class="fas fa-exclamation-triangle"></i> <strong>Erro ao salvar:</strong> Corrija os campos abaixo.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <ul class="mt-2 mb-0">
+                                {% for field, errors in form.errors.items %}
+                                    <li><strong>{{ field|title }}</strong>: {{ errors.0 }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Cliente (com autocomplete) -->
+                        <div class="mb-3">
+                            <label for="id_plastica_cliente" class="form-label">Cliente</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                                <input type="hidden" id="id_plastica_cliente_id" name="cliente">
+                                <input type="text" id="id_plastica_cliente" name="cliente_nome"
+                                    class="form-control border-0" placeholder="Digite o nome do cliente...">
+                            </div>
+                        </div>
+
+                        <!-- Telefone do Cliente (preenchido automaticamente) -->
+                        <div class="mb-3">
+                            <label for="telefone" class="form-label">Telefone</label>
+                            <input type="text" id="telefone" class="form-control" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_plastica_procedimento" class="form-label">Procedimento</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-clipboard"></i></span>
+                                {{ form.procedimento }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_plastica_profissional" class="form-label">Profissional</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-briefcase"></i></span>
+                                {{ form.profissional }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_plastica_data" class="form-label">Data do Atendimento</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-calendar"></i></span>
+                                {{ form.data }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_plastica_valor_pago" class="form-label">Valor Pago</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">R$</span>
+                                {{ form.valor_pago }}
+                            </div>
+                        </div>
+
+                        <!-- Forma de Pagamento -->
+<div class="mb-3">
+    <label for="id_forma_pagamento" class="form-label">Forma de Pagamento</label>
+    <div class="input-group">
+        <span class="input-group-text bg-light"><i class="bi bi-credit-card"></i></span>
+        <!-- 🔥 Agora usa o ID correto -->
+        {{ form.forma_pagamento }}
+    </div>
+</div>
+
+<!-- Número de Parcelas (inicialmente oculto) -->
+<div class="mb-3" id="parcelas_container" style="display: none;">
+    <label for="id_parcelas" class="form-label">Número de Parcelas</label>
+    <div class="input-group">
+        <span class="input-group-text bg-light"><i class="bi bi-list-ol"></i></span>
+        {{ form.parcelas }}
+    </div>
+</div>
+
+                        <div class="mb-3">
+                            <label for="id_plastica_descricao" class="form-label">Descrição</label>
+                            {{ form.descricao }}
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'historico_atendimentos_plastica_list' %}" class="btn btn-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Registrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery para autocomplete -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+<!-- Estilização da lista de sugestões -->
+<style>
+    .ui-autocomplete {
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 5px;
+        font-size: 14px;
+        max-height: 180px; /* 🔹 Altura máxima da lista */
+        overflow-y: auto;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1050 !important;
+        width: 300px !important; /* 🔹 Mantém a largura ajustada */
+    }
+
+    .ui-menu-item {
+        padding: 8px 12px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        white-space: nowrap; /* 🔹 Evita que o texto quebre */
+    }
+
+    .ui-menu-item:last-child {
+        border-bottom: none;
+    }
+
+    .ui-menu-item strong {
+        color: #333;
+        font-weight: 700;
+        font-size: 15px; /* 🔹 Nome do cliente maior */
+    }
+
+    .ui-menu-item small {
+        color: #444;
+        font-size: 14px; /* 🔹 Telefone um pouco maior */
+        font-weight: 600; /* 🔹 Deixa o telefone mais destacado */
+    }
+
+    .ui-menu-item:hover {
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 4px;
+    }
+
+    .ui-menu-item:hover strong,
+    .ui-menu-item:hover small {
+        color: #fff; /* 🔹 Nome e telefone ficam brancos no hover */
+    }
+
+    .ui-state-active {
+        background-color: #0056b3 !important;
+        color: #fff !important;
+    }
+</style>
+
+
+<script>
+    $(document).ready(function () {
+        // Autocomplete para CLIENTES
+        $("#id_plastica_cliente").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "{% url 'cliente_autocomplete' %}",
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response(data.map(cliente => ({
+                            label: cliente.label,
+                            value: cliente.id,
+                            telefone: cliente.telefone,
+                            telefone2: cliente.telefone2
+                        })));
+                    }
+                });
+            },
+            minLength: 1,
+            select: function (event, ui) {
+                $("#id_plastica_cliente").val(ui.item.label);
+                $("#id_plastica_cliente_id").val(ui.item.value);
+                $("#telefone").val(ui.item.telefone);
+                return false;
+            }
+        }).autocomplete("instance")._renderItem = function (ul, item) {
+            return $("<li>")
+                .append(`
+                    <div>
+                        <strong>${item.label}</strong><br>
+                        <small>Telefone: ${item.telefone}</small><br>
+                        ${item.telefone2 ? `<small>Telefone Secundário: ${item.telefone2}</small>` : ""}
+                    </div>
+                `)
+                .appendTo(ul);
+        };
+
+        // Garantir que o campo de forma de pagamento tem o ID correto
+        let formaPagamentoField = $("#id_forma_pagamento");
+
+        if (formaPagamentoField.length === 0) {
+            console.log("⚠️ Campo de forma de pagamento NÃO encontrado! Verifique se o ID está correto no HTML.");
+            return;
+        }
+
+        console.log("✅ Campo de forma de pagamento encontrado!");
+
+        // Função para exibir/ocultar o modal de parcelamento
+        function toggleParcelas() {
+            let formaPagamento = formaPagamentoField.val();
+            console.log("Forma de pagamento selecionada:", formaPagamento);
+
+            if (formaPagamento === "Cartão de Crédito") {
+                console.log("✅ Exibindo campo de parcelas...");
+                $("#parcelas_container").fadeIn();
+            } else {
+                console.log("❌ Escondendo campo de parcelas...");
+                $("#parcelas_container").fadeOut();
+                $("#id_parcelas").val("1");
+            }
+
+            // 🛑 Se for cortesia, zerar automaticamente o valor pago
+            if (formaPagamento === "Cortesia") {
+                console.log("🛑 Pagamento por cortesia detectado, zerando valor pago.");
+                $("#id_plastica_valor_pago").val("0.00");
+            }
+        }
+
+        // **Executa a função ao carregar a página e ao mudar a forma de pagamento**
+        toggleParcelas();
+        formaPagamentoField.change(toggleParcelas);
+    });
+</script>
+
+
+
+{% endblock %}
