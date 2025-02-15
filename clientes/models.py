@@ -12,8 +12,8 @@ class RegistroClientes(models.Model):
 
     TIPO_CLIENTE = [
         ("estetica", "Somente Estética"),
-        ("cirurgia", "Somente Cirurgia"),
-        ("ambos", "Cirurgia e Estética"),
+        ("plastica", "Somente Plástica"),  # 🔹 Mantendo o padrão correto
+        ("ambos", "Plástica e Estética"),
     ]
 
     SEXO_CHOICES = [
@@ -37,28 +37,28 @@ class RegistroClientes(models.Model):
         ("outros", "Outros"),
     ]
 
-    name = models.CharField(max_length=400, verbose_name="Nome Completo")
-    d_nasc = models.DateField(verbose_name="Data de Nascimento")
-    cpf = models.CharField(max_length=14, unique=True, verbose_name="CPF")
-    telefone = models.CharField(max_length=15, verbose_name="Telefone")
+    name = models.CharField(max_length=400, verbose_name="Nome Completo")  # 🔹 OBRIGATÓRIO
+    d_nasc = models.DateField(verbose_name="Data de Nascimento", blank=True, null=True)  
+    cpf = models.CharField(max_length=14, unique=True, verbose_name="CPF")  # 🔹 OBRIGATÓRIO
+    telefone = models.CharField(max_length=15, verbose_name="Telefone", blank=True, null=True)
     telefone2 = models.CharField(max_length=15, verbose_name="Telefone Secundário", blank=True, null=True)
-    endereco = models.CharField(max_length=300, verbose_name="Endereço")
-    numero = models.CharField(max_length=10, verbose_name="Número")
+    endereco = models.CharField(max_length=300, verbose_name="Endereço")  # 🔹 OBRIGATÓRIO
+    numero = models.CharField(max_length=10, verbose_name="Número", blank=True, null=True)
     complemento = models.CharField(max_length=100, verbose_name="Complemento", blank=True, null=True)
-    bairro = models.CharField(max_length=100, verbose_name="Bairro")
-    cidade = models.CharField(max_length=100, verbose_name="Cidade")
-    estado = models.CharField(max_length=50, verbose_name="Estado")
-    cep = models.CharField(max_length=9, verbose_name="CEP")
+    bairro = models.CharField(max_length=100, verbose_name="Bairro", blank=True, null=True)
+    cidade = models.CharField(max_length=100, verbose_name="Cidade", blank=True, null=True)
+    estado = models.CharField(max_length=50, verbose_name="Estado", blank=True, null=True)
+    cep = models.CharField(max_length=9, verbose_name="CEP")  # 🔹 OBRIGATÓRIO
     rg = models.CharField(max_length=20, verbose_name="RG", blank=True, null=True)
-    sexo = models.CharField(max_length=15, choices=SEXO_CHOICES, verbose_name="Sexo")
-    formacao = models.CharField(max_length=15, choices=FORMACAO_CHOICES, verbose_name="Formação")
+    sexo = models.CharField(max_length=15, choices=SEXO_CHOICES, verbose_name="Sexo", blank=True, null=True)
+    formacao = models.CharField(max_length=15, choices=FORMACAO_CHOICES, verbose_name="Formação", blank=True, null=True)
     ocupacao = models.CharField(max_length=100, verbose_name="Ocupação/Função", blank=True, null=True)
     plano_saude = models.BooleanField(default=False, verbose_name="Possui Plano de Saúde?")
     nome_plano = models.CharField(max_length=150, verbose_name="Nome do Plano de Saúde", blank=True, null=True)
-    email = models.EmailField(max_length=150, verbose_name="E-mail")
+    email = models.EmailField(max_length=150, verbose_name="E-mail", blank=True, null=True)
     acao = models.CharField(max_length=50, choices=ORIGEM_ACOES, verbose_name="Ação de Origem", default="outros")
     tipo_cliente = models.CharField(max_length=50, choices=TIPO_CLIENTE, verbose_name="Tipo de Cliente", default="estetica")
-    estado_civil = models.CharField(max_length=20, choices=ESTADO_CIVIL_CHOICES, verbose_name="Estado Civil", default="solteiro")
+    estado_civil = models.CharField(max_length=20, choices=ESTADO_CIVIL_CHOICES, verbose_name="Estado Civil", default="solteiro", blank=True, null=True)
     restricao = models.TextField(verbose_name="Restrições", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Atualizado em")
@@ -70,7 +70,6 @@ class RegistroClientes(models.Model):
 
     def __str__(self):
         return self.name
-
 
 
 # Histórico de Clientes
@@ -92,5 +91,3 @@ class HistoricoClientes(models.Model):
 
     def __str__(self):
         return f"Histórico - {self.cliente.name} - {self.consulta_em.strftime('%d/%m/%Y %H:%M:%S')} - {self.tipo_cliente}"
-    
-

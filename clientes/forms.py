@@ -50,6 +50,16 @@ class RegistroClientesForm(forms.ModelForm):
         validators=[RegexValidator(r'^\d{10,11}$', 'O telefone deve ter 10 ou 11 dígitos.')],
     )
 
+    tipo_cliente = forms.ChoiceField(
+        choices=[
+            ("estetica", "Somente Estética"),
+            ("plastica", "Somente Plástica"),  # 🔹 Mantendo o padrão correto
+            ("ambos", "Plástica e Estética"),
+        ],
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        required=True
+    )
+
     numero = forms.CharField(
         max_length=6,
         required=True,
@@ -92,7 +102,16 @@ class RegistroClientesForm(forms.ModelForm):
             'plano_saude': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'nome_plano': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o nome do plano'}),
             'acao': forms.Select(attrs={'class': 'form-select'}),
-            'tipo_cliente': forms.Select(attrs={'class': 'form-select'}),
             'estado_civil': forms.Select(attrs={'class': 'form-select'}),
             'restricao': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Digite as restrições', 'rows': 3}),
         }
+
+    def clean_tipo_cliente(self):
+        tipo_cliente = self.cleaned_data.get("tipo_cliente")
+
+        print("DEBUG: Valor do tipo_cliente no formulário:", tipo_cliente)  # 🔹 Debug temporário
+
+        if tipo_cliente not in ["estetica", "plastica", "ambos"]:
+            raise forms.ValidationError("Tipo de cliente inválido!")
+
+        return tipo_cliente

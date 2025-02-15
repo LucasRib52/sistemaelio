@@ -12,7 +12,6 @@ from estetica.models import PreAgendamento  # Import correto do app onde está o
 from .forms import RegistroClientesForm
 from django.db import transaction
 from plastica.models import RegistroAtendimentoPlastica
-
 from plastica.models import PreAgendamentoPlastica  # 🔹 Importando o modelo correto
 
 class ClienteCreateView(LoginRequiredMixin, CreateView):
@@ -23,6 +22,16 @@ class ClienteCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         cliente = form.save(commit=False)
+
+        print("DEBUG: Tipo de cliente antes de salvar:", cliente.tipo_cliente)  # 🔹 Debug temporário
+
+        # Garantir que o valor correto seja salvo
+        if cliente.tipo_cliente == "plastica":
+            cliente.tipo_cliente = "plastica"  # 🔹 Forçando a atribuição correta
+        elif cliente.tipo_cliente == "estetica":
+            cliente.tipo_cliente = "estetica"
+        elif cliente.tipo_cliente == "ambos":
+            cliente.tipo_cliente = "ambos"
 
         # Removendo caracteres especiais do CPF e telefone antes de salvar
         cliente.cpf = cliente.cpf.replace('.', '').replace('-', '')
@@ -113,6 +122,16 @@ class ClienteUpdateView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         cliente = form.save(commit=False)
 
+        print("DEBUG: Tipo de cliente antes de atualizar:", cliente.tipo_cliente)  # 🔹 Debug temporário
+
+        # Garantir que o valor correto seja salvo
+        if cliente.tipo_cliente == "plastica":
+            cliente.tipo_cliente = "plastica"  # 🔹 Corrigindo qualquer erro de atribuição
+        elif cliente.tipo_cliente == "estetica":
+            cliente.tipo_cliente = "estetica"
+        elif cliente.tipo_cliente == "ambos":
+            cliente.tipo_cliente = "ambos"
+
         # Sanitizando os dados antes de salvar
         cliente.cpf = cliente.cpf.replace('.', '').replace('-', '')
         cliente.telefone = cliente.telefone.replace(' ', '').replace('(', '').replace(')', '').replace('-', '')
@@ -125,9 +144,11 @@ class ClienteUpdateView(LoginRequiredMixin, UpdateView):
             defaults={'acao': "Última atualização", 'tipo_cliente': cliente.tipo_cliente, 'ultima_atualizacao': datetime.now()}
         )
 
-        # Se o histórico já existia, apenas atualizar a data de última atualização
+        # Se o histórico já existia, apenas atualizar a data de última atualização e corrigir tipo_cliente se necessário
         if not created:
             historico.ultima_atualizacao = datetime.now()
+            if historico.tipo_cliente != cliente.tipo_cliente:  # 🔹 Atualizar se houver discrepância
+                historico.tipo_cliente = cliente.tipo_cliente
             historico.save()
 
         messages.success(self.request, "Os dados do cliente foram atualizados com sucesso.")
