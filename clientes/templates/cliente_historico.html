@@ -34,9 +34,8 @@ Histórico de Clientes
             </div>
 
             <div class="col-lg-2 col-md-6">
-                <label class="form-label fw-bold"><i class="bi bi-people"></i> Tipo de Cliente</label>
-                <select name="tipo_cliente" class="form-select">
-                    <option value="">Todos</option>
+                <label class="form-label fw-bold"><i class="bi bi-people"></i> Setor</label>
+                <select name="tipo_cliente" class="form-select">    
                     <option value="estetica" {% if request.GET.tipo_cliente == "estetica" %}selected{% endif %}>Estética</option>
                     <option value="plastica" {% if request.GET.tipo_cliente == "plastica" %}selected{% endif %}>Plástica</option>
                     <option value="ambos" {% if request.GET.tipo_cliente == "ambos" %}selected{% endif %}>Ambos</option>
@@ -98,10 +97,10 @@ Histórico de Clientes
                         <tr>
                             <th>#</th>
                             <th>Nome</th>
-                            <th>Cadastrado em</th>
+                            <th>Cadastrado</th>
                             <th>CPF</th>
-                            <th>Tipo de Cliente</th>
-                            <th>Restrição</th>
+                            <th>Setor</th>
+                            <th>Obs</th>
                             <th>Telefone</th>
                             <th>Última Atualização</th>
                             <th>Ações</th>
@@ -112,13 +111,13 @@ Histórico de Clientes
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td>{{ historico.cliente.name }}</td>
-                            <td>{{ historico.consulta_em|date:"d/m/Y H:i" }}</td>
+                            <td>{{ historico.consulta_em|date:"d/m/Y" }}</td>
                             <td>{{ historico.cliente.cpf|slice:":3" }}.{{ historico.cliente.cpf|slice:"3:6" }}.{{ historico.cliente.cpf|slice:"6:9" }}-{{ historico.cliente.cpf|slice:"9:" }}</td>
                             <td>
                                 {% if historico.tipo_cliente == 'estetica' %}
                                     <span class="badge bg-info">Estética</span>
                                 {% elif historico.tipo_cliente == 'plastica' %}
-                                    <span class="badge bg-warning">Plástica</span>
+                                    <span class="badge bg-dark">Plástica</span>
                                 {% else %}
                                     <span class="badge bg-secondary">Ambos</span>
                                 {% endif %}

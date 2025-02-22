@@ -61,21 +61,22 @@ Detalhes do Cliente
                 </div>
 
                 <div class="col-md-12">
-                    <h5 class="fw-bold text-primary border-bottom pb-2"><i class="bi bi-exclamation-triangle me-2"></i> Restrições</h5>
+                    <h5 class="fw-bold text-primary border-bottom pb-2"><i class="bi bi-exclamation-triangle me-2"></i> Observação</h5>
                     <ul class="list-group list-group-flush shadow-sm rounded-3">
-                        <li class="list-group-item">{{ cliente.restricao|default:"Nenhuma restrição informada." }}</li>
+                        <li class="list-group-item">{{ cliente.restricao|default:"Nenhuma observação informada." }}</li>
                     </ul>
                 </div>
             </div>
 
-            <div class="mt-5 d-flex justify-content-between">
-                <a href="{% url 'clientes_list' %}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
+            <div class="mt-5 d-flex justify-content-center gap-4">
+                <a href="{% url 'clientes_list' %}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg">
                     <i class="bi bi-arrow-left"></i> Voltar
                 </a>
-                <a href="{% url 'cliente_edit' cliente.id %}" class="btn btn-outline-warning btn-lg rounded-pill px-4">
+                <a href="{% url 'cliente_edit' cliente.id %}" class="btn btn-warning btn-lg rounded-pill px-5 py-3 shadow-lg">
                     <i class="bi bi-pencil"></i> Editar
                 </a>
             </div>
+            
         </div>
     </div>
 </div>
@@ -99,6 +100,15 @@ Detalhes do Cliente
 
     .bg-gradient {
         background: linear-gradient(135deg, #0dcaf0, #6610f2);
+    }
+
+    /* Aumenta a visibilidade e o efeito de hover dos botões */
+    .custom-btn {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .custom-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     }
 </style>
 

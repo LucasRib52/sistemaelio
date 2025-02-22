@@ -82,23 +82,23 @@ Registrar Atendimento - Plástica
                         </div>
 
                         <!-- Forma de Pagamento -->
-<div class="mb-3">
-    <label for="id_forma_pagamento" class="form-label">Forma de Pagamento</label>
-    <div class="input-group">
-        <span class="input-group-text bg-light"><i class="bi bi-credit-card"></i></span>
-        <!-- 🔥 Agora usa o ID correto -->
-        {{ form.forma_pagamento }}
-    </div>
-</div>
+                        <div class="mb-3">
+                            <label for="id_forma_pagamento" class="form-label">Forma de Pagamento</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-credit-card"></i></span>
+                                <!-- 🔥 Agora usa o ID correto -->
+                                {{ form.forma_pagamento }}
+                            </div>
+                        </div>
 
-<!-- Número de Parcelas (inicialmente oculto) -->
-<div class="mb-3" id="parcelas_container" style="display: none;">
-    <label for="id_parcelas" class="form-label">Número de Parcelas</label>
-    <div class="input-group">
-        <span class="input-group-text bg-light"><i class="bi bi-list-ol"></i></span>
-        {{ form.parcelas }}
-    </div>
-</div>
+                        <!-- Número de Parcelas (inicialmente oculto) -->
+                        <div class="mb-3" id="parcelas_container" style="display: none;">
+                            <label for="id_parcelas" class="form-label">Número de Parcelas</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-list-ol"></i></span>
+                                {{ form.parcelas }}
+                            </div>
+                        </div>
 
                         <div class="mb-3">
                             <label for="id_plastica_descricao" class="form-label">Descrição</label>
@@ -106,7 +106,7 @@ Registrar Atendimento - Plástica
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <a href="{% url 'historico_atendimentos_plastica_list' %}" class="btn btn-secondary">Cancelar</a>
+                            <a href="{% url 'historico_atendimentos_plastica_list' %}" class="btn btn-secondary">Voltar</a>
                             <button type="submit" class="btn btn-primary">Registrar</button>
                         </div>
                     </form>

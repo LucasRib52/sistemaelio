@@ -5,8 +5,10 @@ class RegistroClientes(models.Model):
     ORIGEM_ACOES = [
         ("google", "Google"),
         ("facebook", "Facebook"),
+        ("formulario", "Formulário"),
         ("instagram", "Instagram"),
-        ("indicacao", "Indicação"),
+        ("amigo", "Amigo"),
+        ("parente", "Parente"),
         ("outros", "Outros"),
     ]
 
@@ -20,7 +22,7 @@ class RegistroClientes(models.Model):
         ("masculino", "Masculino"),
         ("feminino", "Feminino"),
         ("nao_dizer", "Prefiro não dizer"),
-    ]
+    ]   
 
     FORMACAO_CHOICES = [
         ("primaria", "Primária"),
@@ -56,7 +58,7 @@ class RegistroClientes(models.Model):
     plano_saude = models.BooleanField(default=False, verbose_name="Possui Plano de Saúde?")
     nome_plano = models.CharField(max_length=150, verbose_name="Nome do Plano de Saúde", blank=True, null=True)
     email = models.EmailField(max_length=150, verbose_name="E-mail", blank=True, null=True)
-    acao = models.CharField(max_length=50, choices=ORIGEM_ACOES, verbose_name="Ação de Origem", default="outros")
+    acao = models.CharField(max_length=50, choices=ORIGEM_ACOES, verbose_name="Ação de Origem", default="instagram")
     tipo_cliente = models.CharField(max_length=50, choices=TIPO_CLIENTE, verbose_name="Tipo de Cliente", default="estetica")
     estado_civil = models.CharField(max_length=20, choices=ESTADO_CIVIL_CHOICES, verbose_name="Estado Civil", default="solteiro", blank=True, null=True)
     restricao = models.TextField(verbose_name="Restrições", blank=True, null=True)
@@ -75,7 +77,7 @@ class RegistroClientes(models.Model):
 # Histórico de Clientes
 class HistoricoClientes(models.Model):
     cliente = models.ForeignKey(RegistroClientes, on_delete=models.CASCADE, related_name="historico")
-    consulta_em = models.DateTimeField(auto_now_add=True, verbose_name="Consultado em")
+    consulta_em = models.DateField(auto_now_add=True, verbose_name="Consultado em")
     acao = models.CharField(max_length=255, verbose_name="Ação Realizada", blank=True, null=True)
     tipo_cliente = models.CharField(
         max_length=50,
