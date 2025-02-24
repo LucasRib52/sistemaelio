@@ -166,6 +166,18 @@ Editar Cliente
     </div>
 </div>
 
+<!-- Inclusão do jQuery e jQuery Mask Plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('.cpf-mask').mask('000.000.000-00');
+        $('.rg-mask').mask('000.000.000-0');
+        $('.cep-mask').mask('00000-000');
+        $('.telefone-mask').mask('(00) 00000-0000');
+    });
+</script>
+
 <script>
     document.getElementById('buscar-cep').addEventListener('click', function () {
         let cep = document.getElementById('id_cep').value.replace(/\D/g, '');

@@ -23,19 +23,23 @@ class ClienteCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         cliente = form.save(commit=False)
 
-        print("DEBUG: Tipo de cliente antes de salvar:", cliente.tipo_cliente)  # 🔹 Debug temporário
+        print("DEBUG: Tipo de cliente antes de salvar:", cliente.tipo_cliente)
 
         # Garantir que o valor correto seja salvo
         if cliente.tipo_cliente == "plastica":
-            cliente.tipo_cliente = "plastica"  # 🔹 Forçando a atribuição correta
+            cliente.tipo_cliente = "plastica"
         elif cliente.tipo_cliente == "estetica":
             cliente.tipo_cliente = "estetica"
         elif cliente.tipo_cliente == "ambos":
             cliente.tipo_cliente = "ambos"
 
-        # Removendo caracteres especiais do CPF e telefone antes de salvar
+        # Removendo caracteres especiais dos campos formatados antes de salvar
         cliente.cpf = cliente.cpf.replace('.', '').replace('-', '')
+        cliente.rg = cliente.rg.replace('.', '').replace('-', '')
+        cliente.cep = cliente.cep.replace('-', '')
         cliente.telefone = cliente.telefone.replace(' ', '').replace('(', '').replace(')', '').replace('-', '')
+        if cliente.telefone2:
+            cliente.telefone2 = cliente.telefone2.replace(' ', '').replace('(', '').replace(')', '').replace('-', '')
 
         cliente.save()
 
@@ -51,13 +55,13 @@ class ClienteCreateView(LoginRequiredMixin, CreateView):
         celular = self.request.GET.get('celular')
 
         if nome and celular:
-            # 🔹 Buscar pré-agendamentos em Estética
+            # Buscar pré-agendamentos em Estética
             pre_agendamentos = PreAgendamento.objects.filter(nome=nome, celular=celular, cliente__isnull=True)
             for pre_agendamento in pre_agendamentos:
                 pre_agendamento.cliente = cliente
                 pre_agendamento.save()
 
-            # 🔹 Buscar pré-agendamentos em Plástica
+            # Buscar pré-agendamentos em Plástica
             pre_agendamentos_plastica = PreAgendamentoPlastica.objects.filter(nome=nome, celular=celular, cliente__isnull=True)
             for pre_agendamento in pre_agendamentos_plastica:
                 pre_agendamento.cliente = cliente
@@ -69,6 +73,7 @@ class ClienteCreateView(LoginRequiredMixin, CreateView):
     def form_invalid(self, form):
         messages.error(self.request, 'Erro ao registrar cliente. Verifique os campos e tente novamente.')
         return self.render_to_response(self.get_context_data(form=form))
+
 
 # View para visualizar detalhes do cliente
 class ClienteDetailView(LoginRequiredMixin, DetailView):
@@ -122,32 +127,39 @@ class ClienteUpdateView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         cliente = form.save(commit=False)
 
-        print("DEBUG: Tipo de cliente antes de atualizar:", cliente.tipo_cliente)  # 🔹 Debug temporário
+        print("DEBUG: Tipo de cliente antes de atualizar:", cliente.tipo_cliente)
 
         # Garantir que o valor correto seja salvo
         if cliente.tipo_cliente == "plastica":
-            cliente.tipo_cliente = "plastica"  # 🔹 Corrigindo qualquer erro de atribuição
+            cliente.tipo_cliente = "plastica"
         elif cliente.tipo_cliente == "estetica":
             cliente.tipo_cliente = "estetica"
         elif cliente.tipo_cliente == "ambos":
             cliente.tipo_cliente = "ambos"
 
-        # Sanitizando os dados antes de salvar
+        # Sanitizando os dados antes de salvar removendo os caracteres de formatação
         cliente.cpf = cliente.cpf.replace('.', '').replace('-', '')
+        cliente.rg = cliente.rg.replace('.', '').replace('-', '')
+        cliente.cep = cliente.cep.replace('-', '')
         cliente.telefone = cliente.telefone.replace(' ', '').replace('(', '').replace(')', '').replace('-', '')
+        if cliente.telefone2:
+            cliente.telefone2 = cliente.telefone2.replace(' ', '').replace('(', '').replace(')', '').replace('-', '')
 
         cliente.save()
 
-        # Buscar se já existe um histórico para esse cliente
+        # Buscar se já existe um histórico para esse cliente e atualizar
         historico, created = HistoricoClientes.objects.get_or_create(
             cliente=cliente,
-            defaults={'acao': "Última atualização", 'tipo_cliente': cliente.tipo_cliente, 'ultima_atualizacao': datetime.now()}
+            defaults={
+                'acao': "Última atualização",
+                'tipo_cliente': cliente.tipo_cliente,
+                'ultima_atualizacao': datetime.now()
+            }
         )
 
-        # Se o histórico já existia, apenas atualizar a data de última atualização e corrigir tipo_cliente se necessário
         if not created:
             historico.ultima_atualizacao = datetime.now()
-            if historico.tipo_cliente != cliente.tipo_cliente:  # 🔹 Atualizar se houver discrepância
+            if historico.tipo_cliente != cliente.tipo_cliente:
                 historico.tipo_cliente = cliente.tipo_cliente
             historico.save()
 

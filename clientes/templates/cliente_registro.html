@@ -5,10 +5,56 @@ Registrar Cliente
 {% endblock %}
 
 {% block content %}
+<style>
+  /* Deixa o card e seu cabeçalho mais elegante */
+  .card {
+    border-radius: 0.5rem !important;
+  }
+  .card-header {
+    border-radius: 0.5rem 0.5rem 0 0 !important;
+  }
+
+  /* Fortalece o texto dos labels */
+  .form-label {
+    font-weight: 600;
+  }
+
+  /* Ajusta o switch customizado (plano de saúde) */
+  .form-switch .form-check-input {
+    width: 60px;
+    height: 30px;
+    background-color: red;
+    border: 1px solid #ccc;
+    position: relative;
+    cursor: pointer;
+  }
+  .form-switch .form-check-input:checked {
+    background-color: green;
+  }
+  .form-switch .form-check-input::before {
+    content: "";
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: white;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease;
+  }
+  .form-switch .form-check-input:checked::before {
+    transform: translateX(30px);
+  }
+  .form-switch .form-check-label {
+    font-weight: bold;
+    margin-left: 10px;
+  }
+</style>
+
 <div class="container mt-5">
-    <div class="card shadow-lg">
+    <div class="card shadow-lg border-0">
         <div class="card-header bg-primary text-white text-center">
-            <h2><i class="fas fa-user-plus"></i> Cadastro de Cliente</h2>
+            <h2 class="mb-0"><i class="fas fa-user-plus"></i> Cadastro de Cliente</h2>
         </div>
         <div class="card-body">
             {% if messages %}
@@ -19,12 +65,13 @@ Registrar Cliente
                     </div>
                 {% endfor %}
             {% endif %}
-        
+
             {% if form.errors %}
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-circle"></i> <strong>Erro ao salvar:</strong> Por favor, corrija os erros abaixo.
+                    <i class="fas fa-exclamation-circle"></i>
+                    <strong>Erro ao salvar:</strong> Por favor, corrija os erros abaixo.
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    <ul>
+                    <ul class="mb-0">
                         {% for field, errors in form.errors.items %}
                             <li><strong>{{ field|title }}</strong>: {{ errors.0 }}</li>
                         {% endfor %}
@@ -33,217 +80,263 @@ Registrar Cliente
             {% endif %}
         </div>
 
-            <form method="post" novalidate class="row g-3">
-                {% csrf_token %}
-
-                <div class="col-md-4">
-                    <label for="id_name" class="form-label"><i class="fas fa-user"></i> Nome Completo</label>
-                    {{ form.name }}
-                    {% if form.name.errors %}
-                        <div class="text-danger">
-                            {{ form.name.errors.0 }}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="col-md-2">
-                    <label for="id_d_nasc" class="form-label"><i class="fas fa-calendar-alt"></i> Data Nasc.</label>
-                    {{ form.d_nasc }}
-                    {% if form.d_nasc.errors %}
-                        <div class="text-danger">
-                            {{ form.d_nasc.errors.0 }}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="col-md-3">
-                    <label for="id_cpf" class="form-label"><i class="fas fa-id-card"></i> CPF</label>
-                    {{ form.cpf }}
-                    {% if form.cpf.errors %}
-                        <div class="text-danger">
-                            {{ form.cpf.errors.0 }}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="col-md-3">
-                    <label for="id_rg" class="form-label"><i class="fas fa-id-badge"></i> RG</label>
-                    {{ form.rg }}
-                    {% if form.rg.errors %}
-                        <div class="text-danger">
-                            {{ form.rg.errors.0 }}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="col-md-3">
-                    <label for="id_telefone" class="form-label"><i class="fas fa-phone"></i> Telefone</label>
-                    {{ form.telefone }}
-                    {% if form.telefone.errors %}
-                        <div class="text-danger">
-                            {{ form.telefone.errors.0 }}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="col-md-3">
-                    <label for="id_telefone2" class="form-label"><i class="fas fa-phone-alt"></i> Telefone 2</label>
-                    {{ form.telefone2 }}
-                    {% if form.telefone2.errors %}
-                        <div class="text-danger">
-                            {{ form.telefone2.errors.0 }}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="col-md-6">
-                    <label for="id_email" class="form-label"><i class="fas fa-envelope"></i> E-mail</label>
-                    {{ form.email }}
-                    {% if form.email.errors %}
-                        <div class="text-danger">
-                            {{ form.email.errors.0 }}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="col-md-4">
-                    <label for="id_sexo" class="form-label"><i class="fas fa-venus-mars"></i> Sexo</label>
-                    {{ form.sexo }}
-                </div>
-
-                <div class="col-md-4">
-                    <label for="id_tipo_cliente" class="form-label"><i class="fas fa-briefcase-medical"></i> Setor</label>
-                    {{ form.tipo_cliente }}
-                </div>
-
-                <div class="col-md-4">
-                    <label for="id_estado_civil" class="form-label"><i class="fas fa-ring"></i> Estado Civil</label>
-                    {{ form.estado_civil }}
-                </div>
-
-                <div class="col-md-4">
-                    <label for="id_formacao" class="form-label"><i class="fas fa-graduation-cap"></i> Formação</label>
-                    {{ form.formacao }}
-                </div>
-
-                <div class="col-md-6">
-                    <label for="id_ocupacao" class="form-label"><i class="fas fa-briefcase"></i> Ocupação/Função</label>
-                    {{ form.ocupacao }}
-                </div>
-
-                <div class="col-md-4">
-                    <label for="id_cep" class="form-label"><i class="fas fa-mail-bulk"></i> CEP</label>
-                    <div class="input-group">
-                        {{ form.cep }}
-                        <button type="button" id="buscar-cep" class="btn btn-primary">
-                            <i class="fas fa-search"></i> Buscar
-                        </button>
+        <form method="post" novalidate class="row g-3 px-4 pb-4">
+            {% csrf_token %}
+            
+            <!-- Nome -->
+            <div class="col-md-4">
+                <label for="id_name" class="form-label">
+                    <i class="fas fa-user"></i> Nome Completo
+                </label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <div class="text-danger small">
+                        {{ form.name.errors.0 }}
                     </div>
-                </div>
+                {% endif %}
+            </div>
 
-                <div class="col-md-6">
-                    <label for="id_endereco" class="form-label"><i class="fas fa-map-marker-alt"></i> Endereço</label>
-                    {{ form.endereco }}
-                </div>
-
-                <div class="col-md-2">
-                    <label for="id_numero" class="form-label"><i class="fas fa-hashtag"></i> Número</label>
-                    {{ form.numero }}
-                </div>
-
-                <div class="col-md-4">
-                    <label for="id_complemento" class="form-label"><i class="fas fa-building"></i> Complemento</label>
-                    {{ form.complemento }}
-                </div>
-
-                <div class="col-md-4">
-                    <label for="id_bairro" class="form-label"><i class="fas fa-city"></i> Bairro</label>
-                    {{ form.bairro }}
-                </div>
-
-                <div class="col-md-4">
-                    <label for="id_cidade" class="form-label"><i class="fas fa-map"></i> Cidade</label>
-                    {{ form.cidade }}
-                </div>
-
-                <div class="col-md-4">
-                    <label for="id_estado" class="form-label"><i class="fas fa-flag"></i> Estado</label>
-                    {{ form.estado }}
-                </div>
-
-                <div class="col-md-4">
-                    <label for="id_acao" class="form-label"><i class="fas fa-bullhorn"></i> Veio através de</label>
-                    {{ form.acao }}
-                </div>
-
-                <div class="col-md-4">
-                    <label for="id_plano_saude" class="form-label fw-bold">
-                        <i class="fas fa-notes-medical me-2"></i> Possui Plano de Saúde?
-                    </label>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="toggleSwitch">
-                        <label class="form-check-label" id="toggleLabel" for="toggleSwitch">OFF</label>
+            <!-- Data Nasc -->
+            <div class="col-md-2">
+                <label for="id_d_nasc" class="form-label">
+                    <i class="fas fa-calendar-alt"></i> Data Nasc.
+                </label>
+                {{ form.d_nasc }}
+                {% if form.d_nasc.errors %}
+                    <div class="text-danger small">
+                        {{ form.d_nasc.errors.0 }}
                     </div>
-                </div>
-                
-                <div class="col-md-6 mt-3" id="plano-saude-nome" style="display: none;">
-                    <label for="id_nome_plano" class="form-label"><i class="fas fa-hospital"></i> Qual Plano?</label>
-                    <input type="text" class="form-control" id="id_nome_plano" placeholder="Digite o nome do plano">
-                </div>
+                {% endif %}
+            </div>
 
-                <div class="col-md-12">
-                    <label for="id_restricao" class="form-label"><i class="fas fa-exclamation-triangle"></i> Observação</label>
-                    {{ form.restricao }}
-                </div>
+            <!-- CPF -->
+            <div class="col-md-3">
+                <label for="id_cpf" class="form-label">
+                    <i class="fas fa-id-card"></i> CPF
+                </label>
+                {{ form.cpf }}
+                {% if form.cpf.errors %}
+                    <div class="text-danger small">
+                        {{ form.cpf.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
 
-                <div class="d-flex justify-content-end mt-4">
-                    <button type="submit" class="btn btn-success me-2"><i class="fas fa-check"></i> Registrar</button>
-                    <a href="{% url 'clientes_list' %}" class="btn btn-secondary"><i class="fas fa-times"></i>
-                        Voltar</a>
-                </div>
+            <!-- RG -->
+            <div class="col-md-3">
+                <label for="id_rg" class="form-label">
+                    <i class="fas fa-id-badge"></i> RG
+                </label>
+                {{ form.rg }}
+                {% if form.rg.errors %}
+                    <div class="text-danger small">
+                        {{ form.rg.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
 
-                <style>
-                    .form-switch .form-check-input {
-                        width: 60px;
-                        height: 30px;
-                        background-color: red;
-                        border: 1px solid #ccc;
-                        position: relative;  /* Adicionado para manter dentro do switch */
-                        cursor: pointer;
-                    }
-                
-                    .form-switch .form-check-input:checked {
-                        background-color: green;
-                    }
-                
-                    .form-switch .form-check-input::before {
-                        content: "";
-                        position: absolute;
-                        width: 26px;
-                        height: 26px;
-                        border-radius: 50%;
-                        background: white;
-                        top: 2px;
-                        left: 2px;
-                        transition: transform 0.3s ease;
-                    }
-                
-                    .form-switch .form-check-input:checked::before {
-                        transform: translateX(30px);
-                    }
-                
-                    .form-switch .form-check-label {
-                        font-weight: bold;
-                        margin-left: 10px;
-                    }
-                </style>
-                
-            </form>
-        </div>
+            <!-- Telefone -->
+            <div class="col-md-3">
+                <label for="id_telefone" class="form-label">
+                    <i class="fas fa-phone"></i> Telefone
+                </label>
+                {{ form.telefone }}
+                {% if form.telefone.errors %}
+                    <div class="text-danger small">
+                        {{ form.telefone.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Telefone 2 -->
+            <div class="col-md-3">
+                <label for="id_telefone2" class="form-label">
+                    <i class="fas fa-phone-alt"></i> Telefone 2
+                </label>
+                {{ form.telefone2 }}
+                {% if form.telefone2.errors %}
+                    <div class="text-danger small">
+                        {{ form.telefone2.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- E-mail -->
+            <div class="col-md-6">
+                <label for="id_email" class="form-label">
+                    <i class="fas fa-envelope"></i> E-mail
+                </label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="text-danger small">
+                        {{ form.email.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Sexo -->
+            <div class="col-md-4">
+                <label for="id_sexo" class="form-label">
+                    <i class="fas fa-venus-mars"></i> Sexo
+                </label>
+                {{ form.sexo }}
+            </div>
+
+            <!-- Setor (tipo_cliente) -->
+            <div class="col-md-4">
+                <label for="id_tipo_cliente" class="form-label">
+                    <i class="fas fa-briefcase-medical"></i> Setor
+                </label>
+                {{ form.tipo_cliente }}
+            </div>
+
+            <!-- Estado Civil -->
+            <div class="col-md-4">
+                <label for="id_estado_civil" class="form-label">
+                    <i class="fas fa-ring"></i> Estado Civil
+                </label>
+                {{ form.estado_civil }}
+            </div>
+
+            <!-- Formação -->
+            <div class="col-md-4">
+                <label for="id_formacao" class="form-label">
+                    <i class="fas fa-graduation-cap"></i> Formação
+                </label>
+                {{ form.formacao }}
+            </div>
+
+            <!-- Ocupação/Função -->
+            <div class="col-md-6">
+                <label for="id_ocupacao" class="form-label">
+                    <i class="fas fa-briefcase"></i> Ocupação/Função
+                </label>
+                {{ form.ocupacao }}
+            </div>
+
+            <!-- CEP + botão Buscar -->
+            <div class="col-md-4">
+                <label for="id_cep" class="form-label">
+                    <i class="fas fa-mail-bulk"></i> CEP
+                </label>
+                <div class="input-group">
+                    {{ form.cep }}
+                    <button type="button" id="buscar-cep" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Endereço -->
+            <div class="col-md-6">
+                <label for="id_endereco" class="form-label">
+                    <i class="fas fa-map-marker-alt"></i> Endereço
+                </label>
+                {{ form.endereco }}
+            </div>
+
+            <!-- Número -->
+            <div class="col-md-2">
+                <label for="id_numero" class="form-label">
+                    <i class="fas fa-hashtag"></i> Número
+                </label>
+                {{ form.numero }}
+            </div>
+
+            <!-- Complemento -->
+            <div class="col-md-4">
+                <label for="id_complemento" class="form-label">
+                    <i class="fas fa-building"></i> Complemento
+                </label>
+                {{ form.complemento }}
+            </div>
+
+            <!-- Bairro -->
+            <div class="col-md-4">
+                <label for="id_bairro" class="form-label">
+                    <i class="fas fa-city"></i> Bairro
+                </label>
+                {{ form.bairro }}
+            </div>
+
+            <!-- Cidade -->
+            <div class="col-md-4">
+                <label for="id_cidade" class="form-label">
+                    <i class="fas fa-map"></i> Cidade
+                </label>
+                {{ form.cidade }}
+            </div>
+
+            <!-- Estado -->
+            <div class="col-md-4">
+                <label for="id_estado" class="form-label">
+                    <i class="fas fa-flag"></i> Estado
+                </label>
+                {{ form.estado }}
+            </div>
+
+            <!-- Veio através de... -->
+            <div class="col-md-4">
+                <label for="id_acao" class="form-label">
+                    <i class="fas fa-bullhorn"></i> Veio através de
+                </label>
+                {{ form.acao }}
+            </div>
+
+            <!-- Possui Plano de Saúde? (Switch) -->
+            <div class="col-md-4">
+                <label for="id_plano_saude" class="form-label">
+                    <i class="fas fa-notes-medical me-2"></i> Possui Plano de Saúde?
+                </label>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="toggleSwitch">
+                    <label class="form-check-label" id="toggleLabel" for="toggleSwitch">OFF</label>
+                </div>
+            </div>
+
+            <!-- Campo "Qual Plano?" (aparece somente se switch = ON) -->
+            <div class="col-md-6 mt-3" id="plano-saude-nome" style="display: none;">
+                <label for="id_nome_plano" class="form-label">
+                    <i class="fas fa-hospital"></i> Qual Plano?
+                </label>
+                <input type="text" class="form-control" id="id_nome_plano" placeholder="Digite o nome do plano">
+            </div>
+
+            <!-- Observação -->
+            <div class="col-md-12">
+                <label for="id_restricao" class="form-label">
+                    <i class="fas fa-exclamation-triangle"></i> Observação
+                </label>
+                {{ form.restricao }}
+            </div>
+
+            <!-- Botões -->
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit" class="btn btn-success me-2">
+                    <i class="fas fa-check"></i> Registrar
+                </button>
+                <a href="{% url 'clientes_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Voltar
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 
+<!-- jQuery e jQuery Mask Plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 <script>
+    $(document).ready(function(){
+        $('.cpf-mask').mask('000.000.000-00');
+        $('.rg-mask').mask('000.000.000-0');
+        $('.cep-mask').mask('00000-000');
+        $('.telefone-mask').mask('(00) 00000-0000');
+    });
+</script>
+
+<script>
+    // Buscar CEP
     document.getElementById('buscar-cep').addEventListener('click', function () {
         let cep = document.getElementById('id_cep').value.replace(/\D/g, '');
         if (cep.length === 8) {
@@ -251,10 +344,10 @@ Registrar Cliente
                 .then(response => response.json())
                 .then(data => {
                     if (!data.erro) {
-                        document.getElementById('id_endereco').value = data.logradouro;
-                        document.getElementById('id_bairro').value = data.bairro;
-                        document.getElementById('id_cidade').value = data.localidade;
-                        document.getElementById('id_estado').value = data.uf;
+                        document.getElementById('id_endereco').value = data.logradouro || '';
+                        document.getElementById('id_bairro').value = data.bairro || '';
+                        document.getElementById('id_cidade').value = data.localidade || '';
+                        document.getElementById('id_estado').value = data.uf || '';
                     } else {
                         alert("CEP não encontrado!");
                     }
@@ -265,10 +358,10 @@ Registrar Cliente
         }
     });
 
+    // Toggle Plano de Saúde
     document.getElementById('toggleSwitch').addEventListener('change', function () {
         const planoSaudeNome = document.getElementById('plano-saude-nome');
         const label = document.getElementById('toggleLabel');
-
         if (this.checked) {
             label.textContent = 'ON';
             label.style.color = 'green';
