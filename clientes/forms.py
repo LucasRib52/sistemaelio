@@ -137,7 +137,7 @@ class RegistroClientesForm(forms.ModelForm):
         fields = [
             'name', 'd_nasc', 'cpf', 'telefone', 'telefone2', 'endereco', 'numero',
             'complemento', 'bairro', 'cidade', 'estado', 'cep', 'rg', 'sexo', 'formacao',
-            'ocupacao', 'plano_saude', 'email', 'acao', 'tipo_cliente', 'estado_civil',
+            'ocupacao', 'plano_saude', 'email', 'acao','por_quem', 'tipo_cliente', 'estado_civil',
             'restricao', 'nome_plano'
         ]
         widgets = {
@@ -181,6 +181,7 @@ class RegistroClientesForm(forms.ModelForm):
                 'placeholder': 'Digite o nome do plano'
             }),
             'acao': forms.Select(attrs={'class': 'form-select'}),
+            'por_quem': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Informe quem indicou'}),
             'estado_civil': forms.Select(attrs={'class': 'form-select'}),
             'restricao': forms.Textarea(attrs={
                 'class': 'form-control',

@@ -5,212 +5,355 @@ Editar Cliente
 {% endblock %}
 
 {% block content %}
+<style>
+  /* Estilos gerais para deixar o card mais elegante */
+  .card {
+    border-radius: 0.5rem !important;
+  }
+  .card-header {
+    border-radius: 0.5rem 0.5rem 0 0 !important;
+  }
+  /* Fortalece o texto dos labels */
+  .form-label {
+    font-weight: 600;
+  }
+  /* Estilização do switch para Plano de Saúde */
+  .form-switch .form-check-input {
+    width: 60px;
+    height: 30px;
+    background-color: red;
+    border: 1px solid #ccc;
+    position: relative;
+    cursor: pointer;
+  }
+  .form-switch .form-check-input:checked {
+    background-color: green;
+  }
+  .form-switch .form-check-input::before {
+    content: "";
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: white;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease;
+  }
+  .form-switch .form-check-input:checked::before {
+    transform: translateX(30px);
+  }
+  .form-switch .form-check-label {
+    font-weight: bold;
+    margin-left: 10px;
+  }
+</style>
+
 <div class="container mt-5">
-    <div class="card shadow-lg border-0 rounded-4">
-        <div class="card-header bg-primary text-white text-center rounded-top">
-            <h2><i class="fas fa-user-edit"></i> Editar Cliente</h2>
-        </div>
-        <div class="card-body p-4">
-
-            <!-- Exibir mensagens -->
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        <i class="fas fa-info-circle"></i> {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-
-            <!-- Exibir erros de validação -->
-            {% if form.errors %}
-                <div class="alert alert-danger">
-                    <strong>Erro ao salvar os dados!</strong>
-                    <ul>
-                        {% for field, errors in form.errors.items %}
-                            <li><strong>{{ field }}</strong>: {{ errors|join:", " }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-
-            <form method="post" class="row g-3 needs-validation" novalidate>
-                {% csrf_token %}
-
-                <div class="col-md-4">
-                    <label class="form-label fw-bold text-primary">Nome Completo</label>
-                    {{ form.name }}
-                </div>
-
-                <div class="col-md-2">
-                    <label class="form-label fw-bold text-primary">Data de Nascimento</label>
-                    <input type="date" name="d_nasc" class="form-control" value="{{ form.instance.d_nasc|date:'Y-m-d' }}">
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label fw-bold text-primary">CPF</label>
-                    {{ form.cpf }}
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label fw-bold text-primary">RG</label>
-                    {{ form.rg }}
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label fw-bold text-primary">Telefone</label>
-                    {{ form.telefone }}
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label fw-bold text-primary">Telefone Secundário</label>
-                    {{ form.telefone2 }}
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label fw-bold text-primary">E-mail</label>
-                    {{ form.email }}
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label fw-bold text-primary">Sexo</label>
-                    {{ form.sexo }}
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label fw-bold text-primary">Tipo de Cliente</label>
-                    {{ form.tipo_cliente }}
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label fw-bold text-primary">Estado Civil</label>
-                    {{ form.estado_civil }}
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label fw-bold text-primary">Formação</label>
-                    {{ form.formacao }}
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label fw-bold text-primary">Ocupação</label>
-                    {{ form.ocupacao }}
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label fw-bold text-primary">Ação</label>
-                    {{ form.acao }}
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label fw-bold text-primary">CEP</label>
-                    <div class="input-group">
-                        {{ form.cep }}
-                        <button type="button" id="buscar-cep" class="btn btn-primary"><i class="fas fa-search"></i></button>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label fw-bold text-primary">Endereço</label>
-                    {{ form.endereco }}
-                </div>
-
-                <div class="col-md-2">
-                    <label class="form-label fw-bold text-primary">Número</label>
-                    {{ form.numero }}
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label fw-bold text-primary">Bairro</label>
-                    {{ form.bairro }}
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label fw-bold text-primary">Cidade</label>
-                    {{ form.cidade }}
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label fw-bold text-primary">Estado</label>
-                    {{ form.estado }}
-                </div>
-
-                <!-- Plano de Saúde -->
-                <div class="col-md-4">
-                    <label class="form-label fw-bold text-primary">Possui Plano de Saúde?</label>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="toggleSwitch"
-                            {% if form.instance.nome_plano %}checked{% endif %}>
-                        <label class="form-check-label" id="toggleLabel" for="toggleSwitch">
-                            {% if form.instance.nome_plano %}ON{% else %}OFF{% endif %}
-                        </label>
-                    </div>
-                </div>
-
-                <div class="col-md-6 mt-3" id="plano-saude-nome" style="display: {% if form.instance.nome_plano %}block{% else %}none{% endif %};">
-                    <label class="form-label fw-bold text-primary">Qual Plano?</label>
-                    {{ form.nome_plano }}
-                </div>
-
-                <div class="col-md-12">
-                    <label class="form-label fw-bold text-primary">Observação</label>
-                    {{ form.restricao }}
-                </div>
-
-                <div class="d-flex justify-content-end mt-4">
-                    <button type="submit" class="btn btn-primary me-2"><i class="fas fa-save"></i> Salvar Alterações</button>
-                    <a href="{% url 'clientes_list' %}" class="btn btn-secondary"><i class="fas fa-times"></i> Voltar</a>
-                </div>
-            </form>
-        </div>
+  <div class="card shadow-lg border-0">
+    <div class="card-header bg-primary text-white text-center">
+      <h2><i class="fas fa-user-edit"></i> Editar Cliente</h2>
     </div>
+    <div class="card-body px-4 pb-4">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            <i class="fas fa-info-circle"></i> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+      {% if form.errors %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <i class="fas fa-exclamation-circle"></i>
+          <strong>Erro ao salvar:</strong> Por favor, corrija os erros abaixo.
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          <ul class="mb-0">
+            {% for field, errors in form.errors.items %}
+              <li><strong>{{ field|title }}</strong>: {{ errors.0 }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <form method="post" novalidate class="row g-3">
+        {% csrf_token %}
+        <!-- Nome -->
+        <div class="col-md-4">
+          <label for="id_name" class="form-label">
+            <i class="fas fa-user"></i> Nome Completo
+          </label>
+          {{ form.name }}
+          {% if form.name.errors %}
+            <div class="text-danger small">{{ form.name.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <!-- Data de Nascimento -->
+        <div class="col-md-2">
+          <label for="id_d_nasc" class="form-label">
+            <i class="fas fa-calendar-alt"></i> Data Nasc.
+          </label>
+          <input type="date" name="d_nasc" class="form-control" value="{{ form.instance.d_nasc|date:'Y-m-d' }}">
+          {% if form.d_nasc.errors %}
+            <div class="text-danger small">{{ form.d_nasc.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <!-- CPF -->
+        <div class="col-md-3">
+          <label for="id_cpf" class="form-label">
+            <i class="fas fa-id-card"></i> CPF
+          </label>
+          {{ form.cpf }}
+          {% if form.cpf.errors %}
+            <div class="text-danger small">{{ form.cpf.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <!-- RG -->
+        <div class="col-md-3">
+          <label for="id_rg" class="form-label">
+            <i class="fas fa-id-badge"></i> RG
+          </label>
+          {{ form.rg }}
+          {% if form.rg.errors %}
+            <div class="text-danger small">{{ form.rg.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <!-- Telefone -->
+        <div class="col-md-3">
+          <label for="id_telefone" class="form-label">
+            <i class="fas fa-phone"></i> Telefone
+          </label>
+          {{ form.telefone }}
+          {% if form.telefone.errors %}
+            <div class="text-danger small">{{ form.telefone.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <!-- Telefone Secundário -->
+        <div class="col-md-3">
+          <label for="id_telefone2" class="form-label">
+            <i class="fas fa-phone-alt"></i> Telefone 2
+          </label>
+          {{ form.telefone2 }}
+          {% if form.telefone2.errors %}
+            <div class="text-danger small">{{ form.telefone2.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <!-- E-mail -->
+        <div class="col-md-6">
+          <label for="id_email" class="form-label">
+            <i class="fas fa-envelope"></i> E-mail
+          </label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            <div class="text-danger small">{{ form.email.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <!-- Sexo -->
+        <div class="col-md-4">
+          <label for="id_sexo" class="form-label">
+            <i class="fas fa-venus-mars"></i> Sexo
+          </label>
+          {{ form.sexo }}
+        </div>
+        <!-- Tipo de Cliente -->
+        <div class="col-md-4">
+          <label for="id_tipo_cliente" class="form-label">
+            <i class="fas fa-briefcase-medical"></i> Tipo de Cliente
+          </label>
+          {{ form.tipo_cliente }}
+        </div>
+        <!-- Estado Civil -->
+        <div class="col-md-4">
+          <label for="id_estado_civil" class="form-label">
+            <i class="fas fa-ring"></i> Estado Civil
+          </label>
+          {{ form.estado_civil }}
+        </div>
+        <!-- Formação -->
+        <div class="col-md-4">
+          <label for="id_formacao" class="form-label">
+            <i class="fas fa-graduation-cap"></i> Formação
+          </label>
+          {{ form.formacao }}
+        </div>
+        <!-- Ocupação -->
+        <div class="col-md-4">
+          <label for="id_ocupacao" class="form-label">
+            <i class="fas fa-briefcase"></i> Ocupação
+          </label>
+          {{ form.ocupacao }}
+        </div>
+        <!-- Ação (Veio através de) -->
+        <div class="col-md-4">
+          <label for="id_acao" class="form-label">
+            <i class="fas fa-bullhorn"></i> Veio através de
+          </label>
+          {{ form.acao }}
+        </div>
+        <!-- Campo "Por quem?" (alinhado ao lado) -->
+        <div class="col-md-4" id="div-por-quem" style="display: none;">
+          <label for="id_por_quem" class="form-label">
+            <i class="fas fa-user-tag"></i> Por quem?
+          </label>
+          {{ form.por_quem }}
+        </div>
+        <!-- CEP + botão Buscar -->
+        <div class="col-md-4">
+          <label for="id_cep" class="form-label">
+            <i class="fas fa-mail-bulk"></i> CEP
+          </label>
+          <div class="input-group">
+            {{ form.cep }}
+            <button type="button" id="buscar-cep" class="btn btn-primary">
+              <i class="fas fa-search"></i> Buscar
+            </button>
+          </div>
+        </div>
+        <!-- Endereço -->
+        <div class="col-md-6">
+          <label for="id_endereco" class="form-label">
+            <i class="fas fa-map-marker-alt"></i> Endereço
+          </label>
+          {{ form.endereco }}
+        </div>
+        <!-- Número -->
+        <div class="col-md-2">
+          <label for="id_numero" class="form-label">
+            <i class="fas fa-hashtag"></i> Número
+          </label>
+          {{ form.numero }}
+        </div>
+        <!-- Complemento -->
+        <div class="col-md-4">
+          <label for="id_complemento" class="form-label">
+            <i class="fas fa-building"></i> Complemento
+          </label>
+          {{ form.complemento }}
+        </div>
+        <!-- Bairro -->
+        <div class="col-md-4">
+          <label for="id_bairro" class="form-label">
+            <i class="fas fa-city"></i> Bairro
+          </label>
+          {{ form.bairro }}
+        </div>
+        <!-- Cidade -->
+        <div class="col-md-4">
+          <label for="id_cidade" class="form-label">
+            <i class="fas fa-map"></i> Cidade
+          </label>
+          {{ form.cidade }}
+        </div>
+        <!-- Estado -->
+        <div class="col-md-4">
+          <label for="id_estado" class="form-label">
+            <i class="fas fa-flag"></i> Estado
+          </label>
+          {{ form.estado }}
+        </div>
+        <!-- Plano de Saúde -->
+        <div class="col-md-4">
+          <label for="id_plano_saude" class="form-label">
+            <i class="fas fa-notes-medical"></i> Possui Plano de Saúde?
+          </label>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="toggleSwitch" {% if form.instance.nome_plano %}checked{% endif %}>
+            <label class="form-check-label" id="toggleLabel" for="toggleSwitch">
+              {% if form.instance.nome_plano %}ON{% else %}OFF{% endif %}
+            </label>
+          </div>
+        </div>
+        <!-- Qual Plano? -->
+        <div class="col-md-6 mt-3" id="plano-saude-nome" style="display: {% if form.instance.nome_plano %}block{% else %}none{% endif %};">
+          <label for="id_nome_plano" class="form-label">
+            <i class="fas fa-hospital"></i> Qual Plano?
+          </label>
+          {{ form.nome_plano }}
+        </div>
+        <!-- Observação -->
+        <div class="col-md-12">
+          <label for="id_restricao" class="form-label">
+            <i class="fas fa-exclamation-triangle"></i> Observação
+          </label>
+          {{ form.restricao }}
+        </div>
+        <!-- Botões -->
+        <div class="d-flex justify-content-end mt-4">
+          <button type="submit" class="btn btn-success me-2">
+            <i class="fas fa-check"></i> Salvar Alterações
+          </button>
+          <a href="{% url 'clientes_list' %}" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Voltar
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
-<!-- Inclusão do jQuery e jQuery Mask Plugin -->
+<!-- jQuery e jQuery Mask Plugin -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 <script>
-    $(document).ready(function(){
-        $('.cpf-mask').mask('000.000.000-00');
-        $('.rg-mask').mask('000.000.000-0');
-        $('.cep-mask').mask('00000-000');
-        $('.telefone-mask').mask('(00) 00000-0000');
-    });
-</script>
+  // Máscaras
+  $(document).ready(function(){
+    $('.cpf-mask').mask('000.000.000-00');
+    $('.rg-mask').mask('000.000.000-0');
+    $('.cep-mask').mask('00000-000');
+    $('.telefone-mask').mask('(00) 00000-0000');
 
-<script>
-    document.getElementById('buscar-cep').addEventListener('click', function () {
-        let cep = document.getElementById('id_cep').value.replace(/\D/g, '');
-        if (cep.length === 8) {
-            fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                .then(response => response.json())
-                .then(data => {
-                    if (!data.erro) {
-                        document.getElementById('id_endereco').value = data.logradouro;
-                        document.getElementById('id_bairro').value = data.bairro;
-                        document.getElementById('id_cidade').value = data.localidade;
-                        document.getElementById('id_estado').value = data.uf;
-                    } else {
-                        alert("CEP não encontrado!");
-                    }
-                })
-                .catch(() => alert("Erro ao consultar o CEP!"));
-        } else {
-            alert("Digite um CEP válido.");
-        }
-    });
+    // Ajuste inicial do campo "Por quem?"
+    var acaoElem = document.getElementById('id_acao');
+    var divPorQuem = document.getElementById('div-por-quem');
+    if (acaoElem.value === 'outros') {
+      divPorQuem.style.display = 'block';
+    } else {
+      divPorQuem.style.display = 'none';
+    }
 
-    document.getElementById('toggleSwitch').addEventListener('change', function () {
-        const planoSaudeNome = document.getElementById('plano-saude-nome');
-        const label = document.getElementById('toggleLabel');
-
-        if (this.checked) {
-            label.textContent = 'ON';
-            planoSaudeNome.style.display = 'block';
-        } else {
-            label.textContent = 'OFF';
-            planoSaudeNome.style.display = 'none';
-        }
+    // Ao alterar "Veio através de", exibe/oculta "Por quem?"
+    acaoElem.addEventListener('change', function () {
+      if (this.value === 'outros') {
+        divPorQuem.style.display = 'block';
+      } else {
+        divPorQuem.style.display = 'none';
+      }
     });
+  });
+
+  // Buscar CEP
+  document.getElementById('buscar-cep').addEventListener('click', function () {
+    let cep = document.getElementById('id_cep').value.replace(/\D/g, '');
+    if (cep.length === 8) {
+      fetch(`https://viacep.com.br/ws/${cep}/json/`)
+        .then(response => response.json())
+        .then(data => {
+          if (!data.erro) {
+            document.getElementById('id_endereco').value = data.logradouro;
+            document.getElementById('id_bairro').value = data.bairro;
+            document.getElementById('id_cidade').value = data.localidade;
+            document.getElementById('id_estado').value = data.uf;
+          } else {
+            alert("CEP não encontrado!");
+          }
+        })
+        .catch(() => alert("Erro ao consultar o CEP!"));
+    } else {
+      alert("Digite um CEP válido.");
+    }
+  });
+
+  // Toggle Plano de Saúde
+  document.getElementById('toggleSwitch').addEventListener('change', function () {
+    const planoSaudeNome = document.getElementById('plano-saude-nome');
+    const label = document.getElementById('toggleLabel');
+    if (this.checked) {
+      label.textContent = 'ON';
+      planoSaudeNome.style.display = 'block';
+    } else {
+      label.textContent = 'OFF';
+      planoSaudeNome.style.display = 'none';
+    }
+  });
 </script>
 {% endblock %}

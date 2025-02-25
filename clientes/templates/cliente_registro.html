@@ -283,6 +283,12 @@ Registrar Cliente
                 {{ form.acao }}
             </div>
 
+            <!-- Campo "Por quem?" que aparece se selecionar "outros" -->
+            <div class="col-md-4 mt-3" id="div-por-quem" style="display: none;">
+                <label for="id_por_quem" class="form-label">Por quem?</label>
+                {{ form.por_quem }}
+            </div>
+
             <!-- Possui Plano de Saúde? (Switch) -->
             <div class="col-md-4">
                 <label for="id_plano_saude" class="form-label">
@@ -370,6 +376,16 @@ Registrar Cliente
             label.textContent = 'OFF';
             label.style.color = 'red';
             planoSaudeNome.style.display = 'none';
+        }
+    });
+
+    // Exibir campo "Por quem?" quando "Veio através de" for "outros"
+    document.getElementById('id_acao').addEventListener('change', function () {
+        var divPorQuem = document.getElementById('div-por-quem');
+        if (this.value === 'outros') {
+            divPorQuem.style.display = 'block';
+        } else {
+            divPorQuem.style.display = 'none';
         }
     });
 </script>

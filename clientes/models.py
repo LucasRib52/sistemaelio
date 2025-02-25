@@ -59,6 +59,12 @@ class RegistroClientes(models.Model):
     nome_plano = models.CharField(max_length=150, verbose_name="Nome do Plano de Saúde", blank=True, null=True)
     email = models.EmailField(max_length=150, verbose_name="E-mail", blank=True, null=True)
     acao = models.CharField(max_length=50, choices=ORIGEM_ACOES, verbose_name="Ação de Origem", default="instagram")
+    por_quem = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="Por quem?"
+    )
     tipo_cliente = models.CharField(max_length=50, choices=TIPO_CLIENTE, verbose_name="Tipo de Cliente", default="estetica")
     estado_civil = models.CharField(max_length=20, choices=ESTADO_CIVIL_CHOICES, verbose_name="Estado Civil", default="solteiro", blank=True, null=True)
     restricao = models.TextField(verbose_name="Restrições", blank=True, null=True)

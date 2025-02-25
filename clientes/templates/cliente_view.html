@@ -14,7 +14,9 @@ Detalhes do Cliente
             <div class="row gy-4">
                 <!-- Informações Pessoais -->
                 <div class="col-md-6">
-                    <h5 class="fw-bold text-primary border-bottom pb-2"><i class="bi bi-person-circle me-2"></i> Informações Pessoais</h5>
+                    <h5 class="fw-bold text-primary border-bottom pb-2">
+                        <i class="bi bi-person-circle me-2"></i> Informações Pessoais
+                    </h5>
                     <ul class="list-group list-group-flush shadow-sm rounded-3">
                         <li class="list-group-item"><strong>Nome:</strong> {{ cliente.name }}</li>
                         <li class="list-group-item"><strong>Data de Nascimento:</strong> {{ cliente.d_nasc|date:"d/m/Y" }}</li>
@@ -46,9 +48,11 @@ Detalhes do Cliente
                     </ul>
                 </div>
 
-                <!-- Endereço -->
+                <!-- Endereço e Origem -->
                 <div class="col-md-6">
-                    <h5 class="fw-bold text-primary border-bottom pb-2"><i class="bi bi-house-door me-2"></i> Endereço</h5>
+                    <h5 class="fw-bold text-primary border-bottom pb-2">
+                        <i class="bi bi-house-door me-2"></i> Endereço & Origem
+                    </h5>
                     <ul class="list-group list-group-flush shadow-sm rounded-3">
                         <li class="list-group-item">
                             <strong>CEP:</strong> 
@@ -61,12 +65,20 @@ Detalhes do Cliente
                         <li class="list-group-item"><strong>Cidade:</strong> {{ cliente.cidade }}</li>
                         <li class="list-group-item"><strong>Estado:</strong> {{ cliente.estado }}</li>
                         <li class="list-group-item"><strong>Veio através de:</strong> {{ cliente.acao }}</li>
+                        {% if cliente.acao == 'outros' %}
+                            <li class="list-group-item">
+                                <strong>Por quem?:</strong> {{ cliente.por_quem|default:"Não informado" }}
+                            </li>
+                        {% endif %}
+
                     </ul>
                 </div>
 
                 <!-- Plano de Saúde -->
                 <div class="col-md-12">
-                    <h5 class="fw-bold text-primary border-bottom pb-2"><i class="bi bi-clipboard-check me-2"></i> Plano de Saúde</h5>
+                    <h5 class="fw-bold text-primary border-bottom pb-2">
+                        <i class="bi bi-clipboard-check me-2"></i> Plano de Saúde
+                    </h5>
                     <ul class="list-group list-group-flush shadow-sm rounded-3">
                         <li class="list-group-item">
                             <strong>Possui Plano de Saúde:</strong> 
@@ -84,7 +96,9 @@ Detalhes do Cliente
 
                 <!-- Observação -->
                 <div class="col-md-12">
-                    <h5 class="fw-bold text-primary border-bottom pb-2"><i class="bi bi-exclamation-triangle me-2"></i> Observação</h5>
+                    <h5 class="fw-bold text-primary border-bottom pb-2">
+                        <i class="bi bi-exclamation-triangle me-2"></i> Observação
+                    </h5>
                     <ul class="list-group list-group-flush shadow-sm rounded-3">
                         <li class="list-group-item">{{ cliente.restricao|default:"Nenhuma observação informada." }}</li>
                     </ul>
