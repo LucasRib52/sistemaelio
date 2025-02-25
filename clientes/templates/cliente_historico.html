@@ -5,221 +5,243 @@ Histórico de Clientes
 {% endblock %}
 
 {% block content %}
-<!-- CSS adicional para controlar quebras de linha -->
 <style>
-  /* Coluna Nome: pode quebrar linha */
   .col-nome {
-    white-space: normal;       /* Permite quebra de linha */
-    word-wrap: break-word;     /* Quebra palavras muito longas */
-    max-width: 250px;          /* Ajuste conforme desejar */
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 250px;
   }
-
-  /* Colunas CPF e Telefone: não quebram linha */
   .col-cpf,
   .col-telefone {
-    white-space: nowrap;       /* Mantém tudo em uma única linha */
+    white-space: nowrap;
   }
 </style>
 
 <div class="container mt-5">
-    <div class="card shadow-lg border-0 rounded-4">
-        <div class="card-header bg-primary text-white text-center rounded-top">
-            <h2><i class="fas fa-users"></i> Lista de Clientes</h2>
-        </div>
-        <div class="card-body p-4">
-
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="text-muted">Gerencie os clientes registrados</h5>
-                <a href="{% url 'clientes_create' %}" class="btn btn-success">
-                    <i class="bi bi-person-plus"></i> Cadastrar Cliente
-                </a>
-            </div>
-
-            <!-- Formulário de Pesquisa -->
-            <div class="card shadow-sm p-3 mb-4">
-                <div class="card-body">
-                    <form method="get" class="row g-3 align-items-end">
-                        <div class="col-lg-3 col-md-6">
-                            <label class="form-label fw-bold"><i class="bi bi-search"></i> Pesquisar</label>
-                            <input 
-                                type="text" 
-                                name="q" 
-                                class="form-control" 
-                                placeholder="Nome ou CPF..." 
-                                value="{{ request.GET.q|default:'' }}">
-                        </div>
-
-                        <div class="col-lg-2 col-md-6">
-                            <label class="form-label fw-bold"><i class="bi bi-people"></i> Setor</label>
-                            <select name="tipo_cliente" class="form-select">    
-                                <option value="estetica" {% if request.GET.tipo_cliente == "estetica" %}selected{% endif %}>Estética</option>
-                                <option value="plastica" {% if request.GET.tipo_cliente == "plastica" %}selected{% endif %}>Plástica</option>
-                                <option value="ambos" {% if request.GET.tipo_cliente == "ambos" %}selected{% endif %}>Ambos</option>
-                            </select>
-                        </div>
-
-                        <div class="col-lg-2 col-md-6">
-                            <label class="form-label fw-bold"><i class="bi bi-calendar-date"></i> Data Início</label>
-                            <input 
-                                type="date" 
-                                name="data_inicio" 
-                                class="form-control" 
-                                value="{{ request.GET.data_inicio|default:'' }}">
-                        </div>
-
-                        <div class="col-lg-2 col-md-6">
-                            <label class="form-label fw-bold"><i class="bi bi-calendar-date"></i> Data Fim</label>
-                            <input 
-                                type="date" 
-                                name="data_fim" 
-                                class="form-control" 
-                                value="{{ request.GET.data_fim|default:'' }}">
-                        </div>
-
-                        <div class="col-lg-2 col-md-6">
-                            <label class="form-label fw-bold"><i class="bi bi-sort-down"></i> Ordenar por</label>
-                            <select name="order_by" class="form-select">
-                                <option value="-consulta_em" {% if request.GET.order_by == "-consulta_em" %}selected{% endif %}>Mais recente</option>
-                                <option value="consulta_em" {% if request.GET.order_by == "consulta_em" %}selected{% endif %}>Mais antigo</option>
-                                <option value="cliente__name" {% if request.GET.order_by == "cliente__name" %}selected{% endif %}>Nome (A-Z)</option>
-                                <option value="-cliente__name" {% if request.GET.order_by == "-cliente__name" %}selected{% endif %}>Nome (Z-A)</option>
-                                <option value="cliente__cpf" {% if request.GET.order_by == "cliente__cpf" %}selected{% endif %}>CPF (Crescente)</option>
-                                <option value="-cliente__cpf" {% if request.GET.order_by == "-cliente__cpf" %}selected{% endif %}>CPF (Decrescente)</option>
-                                <option value="ultima_atualizacao" {% if request.GET.order_by == "ultima_atualizacao" %}selected{% endif %}>Última atualização (Mais antiga)</option>
-                                <option value="-ultima_atualizacao" {% if request.GET.order_by == "-ultima_atualizacao" %}selected{% endif %}>Última atualização (Mais recente)</option>
-                            </select>
-                        </div>
-
-                        <div class="col-lg-3 col-md-6 d-flex gap-2">
-                            <button class="btn btn-primary w-100" type="submit">
-                                <i class="bi bi-search"></i> Filtrar
-                            </button>
-                            <a href="{% url 'exportar_clientes_excel' %}?data_inicio={{ request.GET.data_inicio }}&data_fim={{ request.GET.data_fim }}" 
-                                class="btn btn-success w-100">
-                                <i class="bi bi-file-earmark-excel"></i> Exportar CSV
-                            </a>
-                            <a href="{% url 'clientes_list' %}" class="btn btn-secondary w-100">
-                                <i class="bi bi-x-circle"></i> Limpar Filtros
-                            </a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Tabela Responsiva -->
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover align-middle">
-                    <thead class="table-dark text-center">
-                        <tr>
-                            <th>#</th>
-                            <!-- Coluna Nome com quebra permitida -->
-                            <th class="col-nome">Nome</th>
-                            <th>Cadastrado</th>
-                            <!-- Coluna CPF sem quebra -->
-                            <th class="col-cpf">CPF</th>
-                            <th>Setor</th>
-                            <th>Obs</th>
-                            <!-- Coluna Telefone sem quebra -->
-                            <th class="col-telefone">Telefone</th>
-                            <th>Última Atualização</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-center">
-                        {% for historico in page_obj %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <!-- Nome: pode quebrar linha -->
-                            <td class="col-nome">{{ historico.cliente.name }}</td>
-                            <td>{{ historico.consulta_em|date:"d/m/Y" }}</td>
-                            <!-- CPF: não quebra -->
-                            <td class="col-cpf">
-                                {{ historico.cliente.cpf|slice:":3" }}.
-                                {{ historico.cliente.cpf|slice:"3:6" }}.
-                                {{ historico.cliente.cpf|slice:"6:9" }}-
-                                {{ historico.cliente.cpf|slice:"9:" }}
-                            </td>
-                            <td>
-                                {% if historico.tipo_cliente == 'estetica' %}
-                                    <span class="badge bg-info">Estética</span>
-                                {% elif historico.tipo_cliente == 'plastica' %}
-                                    <span class="badge bg-dark">Plástica</span>
-                                {% else %}
-                                    <span class="badge bg-secondary">Ambos</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if historico.cliente.restricao %}
-                                    <span class="badge bg-danger">Sim</span>
-                                {% else %}
-                                    <span class="badge bg-success">Não</span>
-                                {% endif %}
-                            </td>
-                            <!-- Telefone: não quebra -->
-                            <td class="col-telefone">
-                                ({{ historico.cliente.telefone|slice:":2" }}) 
-                                {{ historico.cliente.telefone|slice:"2:7" }}-
-                                {{ historico.cliente.telefone|slice:"7:" }}
-                            </td>
-                            <td>
-                                {% if historico.ultima_atualizacao %}
-                                    {{ historico.ultima_atualizacao|date:"d/m/Y H:i" }}
-                                {% else %}
-                                    <span class="text-muted">Não atualizado</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center gap-1">
-                                    <a href="{% url 'cliente_edit' historico.cliente.id %}" class="btn btn-warning btn-sm">
-                                        <i class="bi bi-pencil"></i> Editar
-                                    </a>
-                                    <a href="{% url 'cliente_delete' historico.cliente.id %}" class="btn btn-danger btn-sm">
-                                        <i class="bi bi-trash"></i> Excluir
-                                    </a>
-                                    <a href="{% url 'cliente_view' historico.cliente.id %}" class="btn btn-info btn-sm">
-                                        <i class="bi bi-eye"></i> Visualizar
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="9" class="text-center text-muted">Nenhum cliente encontrado.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Paginação -->
-            <nav aria-label="Navegação de página">
-                <ul class="pagination justify-content-center">
-                    <!-- Botão Primeiro -->
-                    <li class="page-item {% if page_obj.number == 1 %}disabled{% endif %}">
-                        <a class="page-link text-muted" href="{% if page_obj.number > 1 %}?page=1{% else %}#{% endif %}">
-                            Primeiro
-                        </a>
-                    </li>
-
-                    <!-- Paginação com limite de 5 páginas ao redor da atual -->
-                    {% for num in page_obj.paginator.page_range %}
-                        {% if num >= page_obj.number|add:-5 and num <= page_obj.number|add:5 %}
-                            <li class="page-item {% if num == page_obj.number %}active{% endif %}">
-                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-
-                    <!-- Botão Último -->
-                    <li class="page-item {% if page_obj.number == page_obj.paginator.num_pages %}disabled{% endif %}">
-                        <a class="page-link text-muted" href="{% if page_obj.number < page_obj.paginator.num_pages %}?page={{ page_obj.paginator.num_pages }}{% else %}#{% endif %}">
-                            Último
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-
-        </div>
+  <div class="card shadow-lg border-0 rounded-4">
+    <div class="card-header bg-primary text-white text-center rounded-top">
+      <h2><i class="fas fa-users"></i> Lista de Clientes</h2>
     </div>
+    <div class="card-body p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="text-muted">Gerencie os clientes registrados</h5>
+        <a href="{% url 'clientes_create' %}" class="btn btn-success">
+          <i class="bi bi-person-plus"></i> Cadastrar Cliente
+        </a>
+      </div>
+
+      <!-- Formulário de Pesquisa -->
+      <div class="card shadow-sm p-3 mb-4">
+        <div class="card-body">
+          <form method="get" class="row g-3 align-items-end">
+            <div class="col-lg-3 col-md-6">
+              <label class="form-label fw-bold"><i class="bi bi-search"></i> Pesquisar</label>
+              <input 
+                type="text" 
+                name="q" 
+                class="form-control" 
+                placeholder="Nome ou CPF..." 
+                value="{{ request.GET.q|default:'' }}">
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+              <label class="form-label fw-bold"><i class="bi bi-people"></i> Setor</label>
+              <select name="tipo_cliente" class="form-select">
+                <!-- Opção em branco -->
+                <option value="" {% if request.GET.tipo_cliente == "" %}selected{% endif %}></option>
+                <option value="estetica" {% if request.GET.tipo_cliente == "estetica" %}selected{% endif %}>Estética</option>
+                <option value="plastica" {% if request.GET.tipo_cliente == "plastica" %}selected{% endif %}>Plástica</option>
+                <option value="ambos" {% if request.GET.tipo_cliente == "ambos" %}selected{% endif %}>Ambos</option>
+              </select>
+            </div>
+            
+
+            <div class="col-lg-2 col-md-6">
+              <label class="form-label fw-bold"><i class="bi bi-calendar-date"></i> Data Início</label>
+              <input 
+                type="date" 
+                name="data_inicio" 
+                class="form-control" 
+                value="{{ request.GET.data_inicio|default:'' }}">
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+              <label class="form-label fw-bold"><i class="bi bi-calendar-date"></i> Data Fim</label>
+              <input 
+                type="date" 
+                name="data_fim" 
+                class="form-control" 
+                value="{{ request.GET.data_fim|default:'' }}">
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+              <label class="form-label fw-bold"><i class="bi bi-sort-down"></i> Ordenar por</label>
+              <select name="order_by" class="form-select">
+                <option value="-consulta_em"
+                  {% if request.GET.order_by == "-consulta_em" or not request.GET.order_by %}selected{% endif %}
+                >
+                  Mais recente
+                </option>
+                <option value="consulta_em"
+                  {% if request.GET.order_by == "consulta_em" %}selected{% endif %}
+                >
+                  Mais antigo
+                </option>
+                <option value="cliente__name"
+                  {% if request.GET.order_by == "cliente__name" %}selected{% endif %}
+                >
+                  Nome (A-Z)
+                </option>
+                <option value="-cliente__name"
+                  {% if request.GET.order_by == "-cliente__name" %}selected{% endif %}
+                >
+                  Nome (Z-A)
+                </option>
+                <option value="cliente__cpf"
+                  {% if request.GET.order_by == "cliente__cpf" %}selected{% endif %}
+                >
+                  CPF (Crescente)
+                </option>
+                <option value="-cliente__cpf"
+                  {% if request.GET.order_by == "-cliente__cpf" %}selected{% endif %}
+                >
+                  CPF (Decrescente)
+                </option>
+                <option value="ultima_atualizacao"
+                  {% if request.GET.order_by == "ultima_atualizacao" %}selected{% endif %}
+                >
+                  Última atualização (Mais antiga)
+                </option>
+                <option value="-ultima_atualizacao"
+                  {% if request.GET.order_by == "-ultima_atualizacao" %}selected{% endif %}
+                >
+                  Última atualização (Mais recente)
+                </option>
+              </select>
+            </div>
+
+            <div class="col-lg-3 col-md-6 d-flex gap-2">
+              <button class="btn btn-primary w-100" type="submit">
+                <i class="bi bi-search"></i> Filtrar
+              </button>
+              <a href="{% url 'exportar_clientes_excel' %}?data_inicio={{ request.GET.data_inicio }}&data_fim={{ request.GET.data_fim }}"
+                 class="btn btn-success w-100">
+                <i class="bi bi-file-earmark-excel"></i> Exportar CSV
+              </a>
+              <a href="{% url 'clientes_list' %}" class="btn btn-secondary w-100">
+                <i class="bi bi-x-circle"></i> Limpar Filtros
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Tabela Responsiva -->
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+          <thead class="table-dark text-center">
+            <tr>
+              <th>#</th>
+              <th class="col-nome">Nome</th>
+              <th>Cadastrado</th>
+              <th class="col-cpf">CPF</th>
+              <th>Setor</th>
+              <th>Obs</th>
+              <th class="col-telefone">Telefone</th>
+              <th>Última Atualização</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody class="text-center">
+            {% for historico in page_obj %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td class="col-nome">{{ historico.cliente.name }}</td>
+              <td>{{ historico.consulta_em|date:"d/m/Y" }}</td>
+              <td class="col-cpf">
+                {{ historico.cliente.cpf|slice:":3" }}.
+                {{ historico.cliente.cpf|slice:"3:6" }}.
+                {{ historico.cliente.cpf|slice:"6:9" }}-
+                {{ historico.cliente.cpf|slice:"9:" }}
+              </td>
+              <td>
+                {% if historico.tipo_cliente == 'estetica' %}
+                  <span class="badge bg-info">Estética</span>
+                {% elif historico.tipo_cliente == 'plastica' %}
+                  <span class="badge bg-dark">Plástica</span>
+                {% elif historico.tipo_cliente == 'ambos' %}
+                  <span class="badge bg-secondary">Ambos</span>
+                {% else %}
+                  <span class="badge bg-secondary">Não informado</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if historico.cliente.restricao %}
+                  <span class="badge bg-danger">Sim</span>
+                {% else %}
+                  <span class="badge bg-success">Não</span>
+                {% endif %}
+              </td>
+              <td class="col-telefone">
+                ({{ historico.cliente.telefone|slice:":2" }})
+                {{ historico.cliente.telefone|slice:"2:7" }}-
+                {{ historico.cliente.telefone|slice:"7:" }}
+              </td>
+              <td>
+                {% if historico.ultima_atualizacao %}
+                  {{ historico.ultima_atualizacao|date:"d/m/Y H:i" }}
+                {% else %}
+                  <span class="text-muted">Não atualizado</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="d-flex justify-content-center gap-1">
+                  <a href="{% url 'cliente_edit' historico.cliente.id %}" class="btn btn-warning btn-sm">
+                    <i class="bi bi-pencil"></i> Editar
+                  </a>
+                  <a href="{% url 'cliente_delete' historico.cliente.id %}" class="btn btn-danger btn-sm">
+                    <i class="bi bi-trash"></i> Excluir
+                  </a>
+                  <a href="{% url 'cliente_view' historico.cliente.id %}" class="btn btn-info btn-sm">
+                    <i class="bi bi-eye"></i> Visualizar
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="9" class="text-center text-muted">Nenhum cliente encontrado.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginação -->
+      <nav aria-label="Navegação de página">
+        <ul class="pagination justify-content-center">
+          <li class="page-item {% if page_obj.number == 1 %}disabled{% endif %}">
+            <a class="page-link text-muted" href="{% if page_obj.number > 1 %}?page=1{% else %}#{% endif %}">
+              Primeiro
+            </a>
+          </li>
+
+          {% for num in page_obj.paginator.page_range %}
+            {% if num >= page_obj.number|add:-5 and num <= page_obj.number|add:5 %}
+              <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+              </li>
+            {% endif %}
+          {% endfor %}
+
+          <li class="page-item {% if page_obj.number == page_obj.paginator.num_pages %}disabled{% endif %}">
+            <a class="page-link text-muted" href="{% if page_obj.number < page_obj.paginator.num_pages %}?page={{ page_obj.paginator.num_pages }}{% else %}#{% endif %}">
+              Último
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
 </div>
 {% endblock %}
