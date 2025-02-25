@@ -14,6 +14,7 @@ import xlsxwriter
 from django.db.models import Sum, F, Count, Exists, OuterRef
 from django.utils.timezone import datetime
 from datetime import timedelta
+from .models import RegistroClientes
 from django.db.models import Exists, OuterRef
 import os
 from django.conf import settings
@@ -189,6 +190,26 @@ class HistoricoAtendimentosPlasticaListView(LoginRequiredMixin, ListView):
         context['contrato'] = self.request.GET.get('contrato', '')
         context['order_by'] = self.request.GET.get('order_by', '')
         return context
+
+class ClienteAutocompletePlasticaView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        term = request.GET.get('term', '').strip()
+        if term:
+            # Filtra por nome ou telefone (pode incluir telefone secundário se desejar)
+            clientes = RegistroClientes.objects.filter(
+                Q(name__icontains=term) | Q(telefone__icontains=term)
+            )[:10]
+            cliente_list = [
+                {
+                    "id": cliente.id,
+                    "label": cliente.name,
+                    "telefone": cliente.telefone,
+                    "telefone2": getattr(cliente, 'telefone2', '')
+                }
+                for cliente in clientes
+            ]
+            return JsonResponse(cliente_list, safe=False)
+        return JsonResponse([], safe=False)
 
 class AtendimentoPlasticaUpdateView(LoginRequiredMixin, UpdateView):
     model = HistoricoProcedimentosPlastica

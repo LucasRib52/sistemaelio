@@ -13,6 +13,7 @@ from .views import (
     HistoricoAtendimentosPlasticaListView,
     AtendimentoPlasticaUpdateView,
     AtendimentoPlasticaDeleteView,
+    ClienteAutocompletePlasticaView,
     PreAgendamentoPlasticaCreateView,
     PreAgendamentoPlasticaListView,
     PreAgendamentoPlasticaUpdateView,
@@ -51,6 +52,8 @@ urlpatterns = [
     path('plastica/atendimento/historico/', login_required(HistoricoAtendimentosPlasticaListView.as_view()), name='historico_atendimentos_plastica_list'),
     path('plastica/atendimento/editar/<int:pk>/', login_required(AtendimentoPlasticaUpdateView.as_view()), name='atendimento_plastica_update'),
     path('plastica/atendimento/excluir/<int:pk>/', login_required(AtendimentoPlasticaDeleteView.as_view()), name='atendimento_plastica_delete'),
+    path('plastica/autocomplete/cliente/', login_required(ClienteAutocompletePlasticaView.as_view()), name='cliente_autocomplete_plastica'),
+
     
     # Pré-Agendamentos
     path('plastica/pre-agendamento/cadastrar/', login_required(PreAgendamentoPlasticaCreateView.as_view()), name='pre_agendamento_plastica_create'),

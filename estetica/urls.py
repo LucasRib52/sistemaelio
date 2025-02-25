@@ -15,6 +15,7 @@ from .views import (
     AtendimentoDeleteView,
     AtendimentoUpdatePaymentView,
     ClienteAutocompleteView,
+    ClienteAutocompletePhoneView,
     PreAgendamentoCreateView,
     PreAgendamentoListView,
     PreAgendamentoUpdateView,
@@ -48,6 +49,8 @@ urlpatterns = [
     path('atendimento/excluir/<int:pk>/', login_required(AtendimentoDeleteView.as_view()), name='atendimento_delete'),
     path('atendimento/atualizar-pagamento/<int:pk>/', login_required(AtendimentoUpdatePaymentView.as_view()), name='atendimento_update_payment'),
     path('autocomplete/cliente/', login_required(ClienteAutocompleteView.as_view()), name='cliente_autocomplete'),
+    path('autocomplete/cliente-telefone/', ClienteAutocompletePhoneView.as_view(), name='cliente_autocomplete_phone'),
+
     
     # Pré-Agendamentos
     path('pre-agendamento/cadastrar/', login_required(PreAgendamentoCreateView.as_view()), name='pre_agendamento_create'),

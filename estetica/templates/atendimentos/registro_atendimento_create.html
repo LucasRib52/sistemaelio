@@ -25,55 +25,62 @@
                         </div>
                         {% endif %}
 
-                        <!-- Cliente (com autocomplete estilizado) -->
+                        <!-- Cliente (com autocomplete para NOME) -->
                         <div class="mb-3">
                             <label for="id_estetica_cliente" class="form-label fw-bold text-primary">Cliente</label>
                             <div class="input-group shadow-sm">
-                                <span class="input-group-text bg-gradient text-white"
-                                    style="background-color: #0d6efd;">
+                                <span class="input-group-text bg-gradient text-white" style="background-color: #0d6efd;">
                                     <i class="bi bi-person-fill"></i>
                                 </span>
                                 <input type="hidden" id="id_estetica_cliente_id" name="cliente">
                                 <input type="text" id="id_estetica_cliente" name="cliente_nome"
-                                    class="form-control border-0" placeholder="Digite o nome do cliente...">
+                                       class="form-control border-0"
+                                       placeholder="Digite o nome do cliente...">
                             </div>
                         </div>
 
-                        <!-- Telefones do cliente -->
+                        <!-- Telefones do cliente (autocomplete para TELEFONE) -->
                         <div class="mb-3">
                             <label for="telefone" class="form-label fw-bold text-primary">Telefone</label>
-                            <input type="text" id="telefone" class="form-control" readonly>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-light"><i class="bi bi-telephone"></i></span>
+                                <input type="text" id="telefone" class="form-control" placeholder="Digite o telefone...">
+                            </div>
                         </div>
 
                         <!-- Procedimento com Autocomplete -->
                         <div class="mb-3">
-                            <label for="id_estetica_procedimento"
-                                class="form-label fw-bold text-primary">Procedimento</label>
+                            <label for="id_estetica_procedimento" class="form-label fw-bold text-primary">
+                                Procedimento
+                            </label>
                             <div class="input-group shadow-sm">
                                 <span class="input-group-text bg-light"><i class="bi bi-clipboard"></i></span>
                                 <input type="hidden" id="id_estetica_procedimento_id" name="procedimento">
                                 <input type="text" id="id_estetica_procedimento" name="procedimento_nome"
-                                    class="form-control border-0" placeholder="Digite para buscar o procedimento...">
+                                       class="form-control border-0"
+                                       placeholder="Digite para buscar o procedimento...">
                             </div>
                         </div>
 
                         <!-- Quantidade de Sessões -->
                         <div class="mb-3">
-                            <label for="id_quantidade_sessoes" class="form-label fw-bold text-primary">Quantidade de
-                                Sessões</label>
+                            <label for="id_quantidade_sessoes" class="form-label fw-bold text-primary">
+                                Quantidade de Sessões
+                            </label>
                             <div class="input-group shadow-sm">
                                 <span class="input-group-text bg-light"><i class="bi bi-calendar-check"></i></span>
                                 <input type="number" name="quantidade_sessoes" id="id_quantidade_sessoes"
-                                    class="form-control" min="1" placeholder="Digite a quantidade de sessões"
-                                    value="{{ form.quantidade_sessoes.value|default:1 }}">
+                                       class="form-control" min="1"
+                                       placeholder="Digite a quantidade de sessões"
+                                       value="{{ form.quantidade_sessoes.value|default:1 }}">
                             </div>
                         </div>
 
-
                         <!-- Profissional -->
                         <div class="mb-3">
-                            <label for="id_estetica_profissional"
-                                class="form-label fw-bold text-primary">Profissional</label>
+                            <label for="id_estetica_profissional" class="form-label fw-bold text-primary">
+                                Profissional
+                            </label>
                             <div class="input-group shadow-sm">
                                 <span class="input-group-text bg-light"><i class="bi bi-briefcase"></i></span>
                                 {{ form.profissional }}
@@ -82,8 +89,9 @@
 
                         <!-- Data do Atendimento -->
                         <div class="mb-3">
-                            <label for="id_estetica_data" class="form-label fw-bold text-primary">Data do
-                                Atendimento</label>
+                            <label for="id_estetica_data" class="form-label fw-bold text-primary">
+                                Data do Atendimento
+                            </label>
                             <div class="input-group shadow-sm">
                                 <span class="input-group-text bg-light"><i class="bi bi-calendar"></i></span>
                                 {{ form.data }}
@@ -92,8 +100,9 @@
 
                         <!-- Valor Total -->
                         <div class="mb-3">
-                            <label for="id_estetica_valor_total" class="form-label fw-bold text-primary">Valor
-                                Total</label>
+                            <label for="id_estetica_valor_total" class="form-label fw-bold text-primary">
+                                Valor Total
+                            </label>
                             <div class="input-group shadow-sm">
                                 <span class="input-group-text bg-light">R$</span>
                                 {{ form.valor_total }}
@@ -102,8 +111,9 @@
 
                         <!-- Valor Pago -->
                         <div class="mb-3">
-                            <label for="id_estetica_valor_pago" class="form-label fw-bold text-primary">Valor
-                                Pago</label>
+                            <label for="id_estetica_valor_pago" class="form-label fw-bold text-primary">
+                                Valor Pago
+                            </label>
                             <div class="input-group shadow-sm">
                                 <span class="input-group-text bg-light">R$</span>
                                 {{ form.valor_pago }}
@@ -112,17 +122,20 @@
 
                         <!-- Forma de Pagamento -->
                         <div class="mb-3">
-                            <label for="id_estetica_forma_pagamento" class="form-label fw-bold text-primary">Forma de
-                                Pagamento</label>
+                            <label for="id_estetica_forma_pagamento" class="form-label fw-bold text-primary">
+                                Forma de Pagamento
+                            </label>
                             <div class="input-group shadow-sm">
                                 <span class="input-group-text bg-light"><i class="bi bi-credit-card"></i></span>
                                 {{ form.forma_pagamento }}
                             </div>
                         </div>
 
-                        <!-- 🆕 Parcelamento (inicialmente escondido) -->
+                        <!-- Parcelamento (inicialmente escondido) -->
                         <div class="mb-3" id="parcelas_container" style="display: none;">
-                            <label for="id_parcelas" class="form-label fw-bold text-primary">Número de Parcelas</label>
+                            <label for="id_parcelas" class="form-label fw-bold text-primary">
+                                Número de Parcelas
+                            </label>
                             <div class="input-group shadow-sm">
                                 <span class="input-group-text bg-light"><i class="bi bi-list-ol"></i></span>
                                 {{ form.parcelas }}
@@ -131,14 +144,17 @@
 
                         <!-- Descrição -->
                         <div class="mb-3">
-                            <label for="id_estetica_descricao" class="form-label fw-bold text-primary">Descrição</label>
+                            <label for="id_estetica_descricao" class="form-label fw-bold text-primary">
+                                Descrição
+                            </label>
                             {{ form.descricao }}
                         </div>
 
                         <!-- Botões -->
                         <div class="d-flex justify-content-between">
-                            <a href="{% url 'historico_atendimentos_list' %}"
-                                class="btn btn-outline-secondary fw-bold">Voltar</a>
+                            <a href="{% url 'historico_atendimentos_list' %}" class="btn btn-outline-secondary fw-bold">
+                                Voltar
+                            </a>
                             <button type="submit" class="btn btn-primary fw-bold shadow">Registrar</button>
                         </div>
                     </form>
@@ -164,6 +180,7 @@
         max-height: 300px;
         overflow-y: auto;
         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 1050 !important; /* Mantém a lista acima de outros elementos */
     }
 
     .ui-menu-item {
@@ -186,33 +203,25 @@
         color: #fff !important;
         font-weight: bold;
     }
-
-    /* Ajustando posição da lista */
-    .ui-autocomplete {
-        z-index: 1050 !important;
-    }
 </style>
 
 <script>
-    <!-- 🆕 Script para Mostrar/Ocultar Parcelamento -->
-
-    $(document).ready(function () {
-        function toggleParcelas() {
-            let formaPagamento = $("#id_estetica_forma_pagamento").val();
-            if (formaPagamento === "Cartão de Crédito") {
-                $("#parcelas_container").show();
-            } else {
-                $("#parcelas_container").hide();
-                $("#id_parcelas").val("1");  // Define parcelas como 1 se outra opção for selecionada
-            }
+    // Função para formatar telefones no padrão brasileiro (xx) xxxxx-xxxx
+    function formatPhone(phone) {
+        phone = phone.replace(/\D/g, '');
+        if (phone.length === 11) {
+            return "(" + phone.substring(0,2) + ") " + phone.substring(2,7) + "-" + phone.substring(7);
+        } else if (phone.length === 10) {
+            return "(" + phone.substring(0,2) + ") " + phone.substring(2,6) + "-" + phone.substring(6);
         }
+        return phone;
+    }
 
-        // Chama a função ao carregar a página e ao mudar a forma de pagamento
-        toggleParcelas();
-        $("#id_estetica_forma_pagamento").change(toggleParcelas);
-    });
     $(document).ready(function () {
-        // Autocomplete para CLIENTES
+        /**
+         * 1) Autocomplete para NOME do cliente
+         *    -> Rota que filtra por name__icontains
+         */
         $("#id_estetica_cliente").autocomplete({
             source: function (request, response) {
                 $.ajax({
@@ -221,8 +230,8 @@
                     data: { term: request.term },
                     success: function (data) {
                         response(data.map(cliente => ({
-                            label: cliente.label,
-                            value: cliente.id,
+                            label: cliente.label,  // exibição
+                            value: cliente.id,     // ID do cliente
                             telefone: cliente.telefone,
                             telefone2: cliente.telefone2
                         })));
@@ -231,9 +240,10 @@
             },
             minLength: 1,
             select: function (event, ui) {
+                // Quando seleciona um cliente pelo NOME
                 $("#id_estetica_cliente").val(ui.item.label);
                 $("#id_estetica_cliente_id").val(ui.item.value);
-                $("#telefone").val(ui.item.telefone);
+                $("#telefone").val(formatPhone(ui.item.telefone));  // Preenche o telefone formatado
                 return false;
             }
         }).autocomplete("instance")._renderItem = function (ul, item) {
@@ -241,14 +251,57 @@
                 .append(`
                     <div>
                         <strong>${item.label}</strong><br>
-                        <small>Telefone: ${item.telefone}</small><br>
-                        ${item.telefone2 ? `<small>Telefone Secundário: ${item.telefone2}</small>` : ""}
+                        <small>Telefone: ${formatPhone(item.telefone)}</small><br>
+                        ${item.telefone2 ? `<small>Telefone Secundário: ${formatPhone(item.telefone2)}</small>` : ""}
                     </div>
                 `)
                 .appendTo(ul);
         };
 
-        // Autocomplete para PROCEDIMENTOS
+        /**
+         * 2) Autocomplete para TELEFONE do cliente
+         *    -> Rota separada, que filtra por telefone__icontains
+         */
+        $("#telefone").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "{% url 'cliente_autocomplete_phone' %}",
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response(data.map(cliente => ({
+                            label: cliente.label,   // exibição (telefone)
+                            value: cliente.id,      // ID do cliente
+                            name: cliente.name,     // nome para preencher o campo de nome
+                            telefone2: cliente.telefone2
+                        })));
+                    }
+                });
+            },
+            minLength: 1,
+            select: function (event, ui) {
+                // Quando seleciona um cliente pelo TELEFONE
+                $("#telefone").val(formatPhone(ui.item.label));        // Preenche o telefone formatado
+                $("#id_estetica_cliente").val(ui.item.name);             // Preenche o nome
+                $("#id_estetica_cliente_id").val(ui.item.value);
+                return false;
+            }
+        }).autocomplete("instance")._renderItem = function (ul, item) {
+            return $("<li>")
+                .append(`
+                    <div>
+                        <strong>${formatPhone(item.label)}</strong><br>
+                        <small>Cliente: ${item.name}</small><br>
+                        ${item.telefone2 ? `<small>Telefone Secundário: ${formatPhone(item.telefone2)}</small>` : ""}
+                    </div>
+                `)
+                .appendTo(ul);
+        };
+
+        /**
+         * 3) Autocomplete para PROCEDIMENTOS
+         *    -> Rota 'procedimento_autocomplete'
+         */
         $("#id_estetica_procedimento").autocomplete({
             source: function (request, response) {
                 $.ajax({
@@ -258,8 +311,8 @@
                     success: function (data) {
                         response(data.map(proc => ({
                             label: proc.label, // Nome do procedimento
-                            value: proc.id, // ID do procedimento
-                            preco: proc.preco // Preço do procedimento
+                            value: proc.id,    // ID do procedimento
+                            preco: proc.preco
                         })));
                     }
                 });
@@ -281,11 +334,28 @@
                 .appendTo(ul);
         };
 
-        // Restringir campo "Quantidade de Sessões" para aceitar apenas números e garantir que o mínimo seja 1
+        /**
+         * 4) Mostrar ou ocultar o campo de Parcelas se for "Cartão de Crédito"
+         */
+        function toggleParcelas() {
+            let formaPagamento = $("#id_estetica_forma_pagamento").val();
+            if (formaPagamento === "Cartão de Crédito") {
+                $("#parcelas_container").show();
+            } else {
+                $("#parcelas_container").hide();
+                $("#id_parcelas").val("1");
+            }
+        }
+        toggleParcelas();
+        $("#id_estetica_forma_pagamento").change(toggleParcelas);
+
+        /**
+         * 5) Garantir que "Quantidade de Sessões" seja >= 1
+         */
         $("#id_quantidade_sessoes").on("input", function () {
-            this.value = this.value.replace(/[^0-9]/g, ''); // Remove qualquer caractere que não seja número
+            this.value = this.value.replace(/[^0-9]/g, '');
             if (this.value === "" || parseInt(this.value) < 1) {
-                this.value = 1; // Define o valor mínimo como 1
+                this.value = 1;
             }
         });
     });

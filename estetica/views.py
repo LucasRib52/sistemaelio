@@ -9,6 +9,7 @@ import pandas as pd
 from django.http import HttpResponse
 from datetime import datetime, timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 import json
 import xlsxwriter
 from collections import defaultdict
@@ -100,6 +101,27 @@ class ClienteAutocompleteView(LoginRequiredMixin, View):
                 }
                 for cliente in clientes
             ]
+            return JsonResponse(cliente_list, safe=False)
+        return JsonResponse([], safe=False)
+    
+class ClienteAutocompletePhoneView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        term = request.GET.get('term', '').strip()
+        if term:
+            # Filtra APENAS por telefone (e telefone2 se existir)
+            clientes = RegistroClientes.objects.filter(
+                Q(telefone__icontains=term) |
+                Q(telefone2__icontains=term)
+            )[:10]
+            cliente_list = []
+            for cliente in clientes:
+                cliente_list.append({
+                    "id": cliente.id,
+                    "label": cliente.telefone,  # o que aparece no dropdown
+                    "name": cliente.name,       # nome completo para preencher outro campo
+                    "telefone": cliente.telefone,
+                    "telefone2": getattr(cliente, 'telefone2', '')
+                })
             return JsonResponse(cliente_list, safe=False)
         return JsonResponse([], safe=False)
 
