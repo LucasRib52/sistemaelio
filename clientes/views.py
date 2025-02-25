@@ -5,9 +5,9 @@ from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import datetime
 import csv
+from django.shortcuts import render
 import pandas as pd
 from django.db.models import Q
-
 import xlsxwriter
 from .models import RegistroClientes, HistoricoClientes
 from estetica.models import PreAgendamento  # Import correto do app onde está o modelo
@@ -93,25 +93,23 @@ class ClienteListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
 
+        # Parâmetros do GET
         query = self.request.GET.get('q', '').strip()
         tipo_cliente = self.request.GET.get('tipo_cliente', '').strip()
         data_inicio = self.request.GET.get('data_inicio', '')
         data_fim = self.request.GET.get('data_fim', '')
         order_by = self.request.GET.get('order_by', '-consulta_em')
 
-        # Filtro por nome ou CPF (busca OR)
         if query:
-            queryset = queryset.filter(
-                Q(cliente__name__icontains=query) | Q(cliente__cpf__icontains=query)
-            )
+            query_telefone = ''.join(filter(str.isdigit, query))
+            filtro_q = Q(cliente__name__icontains=query)
+            if query_telefone:
+                filtro_q |= Q(cliente__telefone__icontains=query_telefone)
+            queryset = queryset.filter(filtro_q)
 
-        # Filtro por tipo de cliente, somente se vier algo (e não for vazio)
-        # "ambos" também é um valor válido se você quiser filtrar especificamente
-        # por 'ambos'. Se "ambos" não fizer sentido, trate conforme sua regra de negócio.
         if tipo_cliente:
             queryset = queryset.filter(tipo_cliente=tipo_cliente)
 
-        # Filtro por intervalo de datas, se ambos os campos forem informados
         if data_inicio and data_fim:
             try:
                 data_inicio_obj = datetime.strptime(data_inicio, "%Y-%m-%d").date()
@@ -120,7 +118,6 @@ class ClienteListView(LoginRequiredMixin, ListView):
             except ValueError:
                 pass
 
-        # Validação da ordenação para evitar injeção
         valid_fields = [
             'cliente__name',
             'consulta_em',
@@ -131,6 +128,12 @@ class ClienteListView(LoginRequiredMixin, ListView):
             order_by = '-consulta_em'
 
         return queryset.order_by(order_by)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Define flag is_ajax a partir do header da requisição
+        context['is_ajax'] = self.request.headers.get('x-requested-with') == 'XMLHttpRequest'
+        return context
 
 # View para editar os dados do cliente
 class ClienteUpdateView(LoginRequiredMixin, UpdateView):
