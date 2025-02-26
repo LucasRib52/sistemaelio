@@ -1,158 +1,350 @@
-<style>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>AC Clínica - Sidebar e Navbar Modernas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  >
+  <!-- Bootstrap Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+  >
+
+  <style>
+    /* Global */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f7fa;
+      padding-top: 56px; /* Espaço para a navbar fixa */
+    }
+    /* Navbar Superior */
+    .navbar {
+      background: #343a40;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .navbar-brand {
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+    }
+    .navbar-nav .nav-link.active {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+    /* Sidebar */
     .sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 280px; /* Mantém a largura fixa */
-        height: 100vh; /* Ocupa toda a altura da tela */
-        background: linear-gradient(135deg, #0F2027, #203A43, #2C5364);
-        overflow-y: auto; /* Permite rolagem dentro da sidebar se necessário */
-        padding: 15px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 280px;
+      height: 100vh;
+      background: linear-gradient(135deg, #0F2027, #203A43, #2C5364);
+      overflow-y: auto;
+      padding: 20px 15px;
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
     }
-
+    .sidebar a {
+      text-decoration: none;
+    }
+    .sidebar .logo {
+      font-size: 1.75rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .sidebar hr {
+      border-top: 1px solid rgba(255,255,255,0.3);
+    }
+    .sidebar .nav-link {
+      color: #fff;
+      margin-bottom: 5px;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      border-radius: 4px;
+      padding: 8px 12px;
+    }
+    .sidebar .nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+      transform: translateX(3px);
+    }
+    .sidebar .nav-link.active {
+      background-color: rgba(255, 255, 255, 0.25);
+      font-weight: 500;
+    }
+    .sidebar .nav-link i {
+      margin-right: 10px;
+    }
+    /* Sub-listas com efeito slide */
+    .sublist {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+    }
+    .sublist.show {
+      max-height: 500px;
+      opacity: 1;
+    }
+    /* Impede clique nos links principais da sidebar (estado controlado via navbar) */
+    .no-click {
+      pointer-events: none;
+      opacity: 0.8;
+    }
+    /* Conteúdo Principal */
     .content {
-        margin-left: 280px; /* Para não ficar sobre o conteúdo */
-        padding: 20px;
+      margin-left: 280px;
+      padding: 30px;
     }
-</style>
+    /* Usuário Inline na Navbar: estilo do collapse para "Sair" */
+    #userCollapse {
+      display: none;
+    }
+    #userCollapse.show {
+      display: inline-block;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+    #userCollapse a {
+      color: #ffc107;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    #userCollapse a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
 
-<div class="sidebar d-flex flex-column flex-shrink-0 text-white">
-    <!-- Título do Sidebar -->
-    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-        <i class="bi bi-person-circle fs-3 me-2"></i>
-        <span class="fs-4 fw-bold">AC Clínica</span>
-    </a>
-    <hr style="border-color: rgba(255, 255, 255, 0.3);">
-
-    <!-- Menu Principal -->
-    <ul class="nav nav-pills flex-column mb-auto">
-        <!-- Dashboard -->
-        <li class="nav-item">
-            <a href="#" class="nav-link active text-white d-flex align-items-center">
-                <i class="bi bi-speedometer2 fs-5 me-2"></i>
-                <span>Dashboard</span>
+  <!-- NAVBAR SUPERIOR -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container-fluid">
+      <!-- Logo que redireciona para o início -->
+      <a class="navbar-brand fw-bold" href="/">AC Clínica</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTop" aria-controls="navbarTop" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarTop">
+        <ul class="navbar-nav ms-auto">
+          <!-- Links de Seção -->
+          <li class="nav-item">
+            <a href="?sublist=clientes" class="nav-link top-nav-link" data-section="clientes">Clientes</a>
+          </li>
+          <li class="nav-item">
+            <a href="?sublist=estetica" class="nav-link top-nav-link" data-section="estetica">Estética</a>
+          </li>
+          <li class="nav-item">
+            <a href="?sublist=consulta" class="nav-link top-nav-link" data-section="consulta">Consulta</a>
+          </li>
+          <li class="nav-item">
+            <a href="?sublist=contratos" class="nav-link top-nav-link" data-section="contratos">Contratos</a>
+          </li>
+          <!-- Item Usuário com collapse inline -->
+          <li class="nav-item">
+            <a href="javascript:void(0)" class="nav-link" data-bs-toggle="collapse" data-bs-target="#userCollapse" aria-expanded="false" aria-controls="userCollapse">
+              <i class="bi bi-person-circle"></i> Usuário <i class="bi bi-caret-down-fill"></i>
             </a>
-        </li>
-
-        <!-- Clientes -->
-        <li>
-            <a href="#submenuClientes" class="nav-link text-white d-flex align-items-center" data-bs-toggle="collapse"
-                role="button" aria-expanded="true" aria-controls="submenuClientes">
-                <i class="bi bi-people fs-5 me-2"></i>
-                <span>Clientes</span>
-                <i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <div class="collapse show" id="submenuClientes">
-                <ul class="list-unstyled fw-normal pb-1 small">
-                    <li>
-                        <a href="{% url 'clientes_create' %}" class="nav-link text-white ms-4">
-                            <i class="bi bi-person-plus"></i> Cadastro de Clientes
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'clientes_list' %}" class="nav-link text-white ms-4">
-                            <i class="bi bi-list-check"></i> Lista de Clientes
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </li>
-
-        <!-- Estética -->
-        <li>
-            <a href="#submenuEstetica" class="nav-link text-white d-flex align-items-center" data-bs-toggle="collapse"
-                role="button" aria-expanded="true" aria-controls="submenuEstetica">
-                <i class="bi bi-scissors fs-5 me-2"></i>
-                <span>Estética</span>
-                <i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <div class="collapse show" id="submenuEstetica">
-                <ul class="list-unstyled fw-normal pb-1 small">
-                    <li><a href="{% url 'registro_atendimento_create' %}" class="nav-link text-white ms-4"><i
-                                class="bi bi-plus-circle"></i> Registro de Atendimento</a></li>
-                    <li><a href="{% url 'historico_atendimentos_list' %}" class="nav-link text-white ms-4"><i
-                                class="bi bi-clipboard-data"></i> Histórico</a></li>
-                    <li><a href="{% url 'profissional_list' %}" class="nav-link text-white ms-4"><i
-                                class="bi bi-person-workspace"></i> Profissionais</a></li>
-                    <li><a href="{% url 'procedimento_list' %}" class="nav-link text-white ms-4"><i
-                                class="bi bi-list-ul"></i> Procedimentos</a></li>
-                    <li><a href="{% url 'pre_agendamento_list' %}" class="nav-link text-white ms-4"><i
-                                class="bi bi-calendar-check"></i> Pré-Agendamentos</a></li>
-                    <li><a href="{% url 'pre_agendamento_calendar' %}" class="nav-link text-white ms-4"><i
-                                class="bi bi-calendar3"></i> Agenda Pré-Agendamentos</a></li>
-                    <li><a href="{% url 'relatorio_financeiro' %}" class="nav-link text-white ms-4"><i
-                                class="bi bi-currency-dollar"></i> Relatórios</a></li>
-                </ul>
-            </div>
-        </li>
-
-        <!-- Consulta (Plástica) -->
-        <li>
-            <a href="#submenuPlastica" class="nav-link text-white d-flex align-items-center" data-bs-toggle="collapse"
-                role="button" aria-expanded="true" aria-controls="submenuPlastica">
-                <i class="bi bi-hospital fs-5 me-2"></i>
-                <span>Consulta</span>
-                <i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <div class="collapse show" id="submenuPlastica">
-                <ul class="list-unstyled fw-normal pb-1 small">
-                    <li><a href="{% url 'registro_atendimento_plastica_create' %}" class="nav-link text-white ms-4"><i
-                                class="bi bi-plus-circle"></i> Registro</a></li>
-                    <li><a href="{% url 'historico_atendimentos_plastica_list' %}" class="nav-link text-white ms-4"><i
-                                class="bi bi-clipboard-data"></i> Histórico</a></li>
-                    <li><a href="{% url 'profissional_plastica_list' %}" class="nav-link text-white ms-4"><i
-                                class="bi bi-person-workspace"></i> Profissionais</a></li>
-                    <li><a href="{% url 'procedimento_plastica_list' %}" class="nav-link text-white ms-4"><i
-                                class="bi bi-list-ul"></i> Procedimentos</a></li>
-                    <li><a href="{% url 'pre_agendamento_plastica_list' %}" class="nav-link text-white ms-4"><i
-                                class="bi bi-calendar-check"></i> Pré-Agendamentos</a></li>
-                    <li><a href="{% url 'pre_agendamento_plastica_calendar' %}" class="nav-link text-white ms-4"><i
-                                class="bi bi-calendar3"></i> Agenda Pré-Agendamentos</a></li>
-                    <li><a href="{% url 'relatorio_financeiro_plastica' %}" class="nav-link text-white ms-4"><i
-                                class="bi bi-currency-dollar"></i> Relatórios</a></li>
-                </ul>
-            </div>
-        </li>
-
-        <!-- Contratos -->
-        <li>
-            <a href="#submenuContratos" class="nav-link text-white d-flex align-items-center" data-bs-toggle="collapse"
-                role="button" aria-expanded="true" aria-controls="submenuContratos">
-                <i class="bi bi-file-text fs-5 me-2"></i>
-                <span>Contratos</span>
-                <i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <div class="collapse show" id="submenuContratos">
-                <ul class="list-unstyled fw-normal pb-1 small">
-                    <li><a href="{% url 'contrato_plastica_list' %}" class="nav-link text-white ms-4"><i
-                                class="bi bi-folder2"></i> Listar Contratos</a></li>
-                    <li><a href="{% url 'relatorio_financeiro_contrato' %}" class="nav-link text-white ms-4"><i
-                                class="bi bi-currency-dollar"></i> Relatórios</a></li>
-                </ul>
-            </div>
-        </li>
-
-        <!-- Usuário -->
-    <div class="dropdown">
-        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1"
-            data-bs-toggle="dropdown" aria-expanded="false">
-            <strong>Usuário</strong>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-            <li>
-                <hr class="dropdown-divider">
-            </li>
-            <li>
-                <!-- Botão de logout -->
-                <a class="dropdown-item text-danger" href="{% url 'login' %}">
-                    <i class="bi bi-box-arrow-right"></i> Sair
-                </a>
-            </li>
+            <span id="userCollapse" class="collapse">
+              <a href="{% url 'login' %}" class="nav-link d-inline text-danger">
+                <i class="bi bi-box-arrow-right"></i> Sair
+              </a>
+            </span>
+          </li>
         </ul>
+      </div>
     </div>
-    </ul>
-</div>
+  </nav>
 
-<div class="content">
-    <!-- Aqui fica o conteúdo principal -->
-</div>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <!-- Logo/Título (redireciona para o início) -->
+    <a href="/" class="d-flex align-items-center mb-3 text-white text-decoration-none">
+      <i class="bi bi-person-circle fs-3 me-2"></i>
+      <span class="logo">AC Clínica</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+      <!-- DASHBOARD -->
+      <li class="nav-item mb-1">
+        <a href="/" class="nav-link active d-flex align-items-center">
+          <i class="bi bi-speedometer2 fs-5"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <!-- CLIENTES -->
+      <li class="nav-item mb-1">
+        <a href="#" class="nav-link d-flex align-items-center no-click">
+          <i class="bi bi-people fs-5"></i>
+          <span>Clientes</span>
+          <i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <div id="sublist-clientes" class="sublist">
+          <ul class="list-unstyled fw-normal pb-1 small">
+            <li>
+              <a href="{% url 'clientes_create' %}?sublist=clientes" class="nav-link text-white ms-4">
+                <i class="bi bi-person-plus"></i> Cadastro de Clientes
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'clientes_list' %}?sublist=clientes" class="nav-link text-white ms-4">
+                <i class="bi bi-list-check"></i> Lista de Clientes
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <!-- ESTÉTICA -->
+      <li class="nav-item mb-1">
+        <a href="#" class="nav-link d-flex align-items-center no-click">
+          <i class="bi bi-scissors fs-5"></i>
+          <span>Estética</span>
+          <i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <div id="sublist-estetica" class="sublist">
+          <ul class="list-unstyled fw-normal pb-1 small">
+            <li>
+              <a href="{% url 'registro_atendimento_create' %}?sublist=estetica" class="nav-link text-white ms-4">
+                <i class="bi bi-plus-circle"></i> Registro de Atendimento
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'historico_atendimentos_list' %}?sublist=estetica" class="nav-link text-white ms-4">
+                <i class="bi bi-clipboard-data"></i> Histórico
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'profissional_list' %}?sublist=estetica" class="nav-link text-white ms-4">
+                <i class="bi bi-person-workspace"></i> Profissionais
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'procedimento_list' %}?sublist=estetica" class="nav-link text-white ms-4">
+                <i class="bi bi-list-ul"></i> Procedimentos
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'pre_agendamento_list' %}?sublist=estetica" class="nav-link text-white ms-4">
+                <i class="bi bi-calendar-check"></i> Pré-Agendamentos
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'pre_agendamento_calendar' %}?sublist=estetica" class="nav-link text-white ms-4">
+                <i class="bi bi-calendar3"></i> Agenda Pré-Agendamentos
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'relatorio_financeiro' %}?sublist=estetica" class="nav-link text-white ms-4">
+                <i class="bi bi-currency-dollar"></i> Relatórios
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <!-- CONSULTA -->
+      <li class="nav-item mb-1">
+        <a href="#" class="nav-link d-flex align-items-center no-click">
+          <i class="bi bi-hospital fs-5"></i>
+          <span>Consulta</span>
+          <i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <div id="sublist-consulta" class="sublist">
+          <ul class="list-unstyled fw-normal pb-1 small">
+            <li>
+              <a href="{% url 'registro_atendimento_plastica_create' %}?sublist=consulta" class="nav-link text-white ms-4">
+                <i class="bi bi-plus-circle"></i> Registro
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'historico_atendimentos_plastica_list' %}?sublist=consulta" class="nav-link text-white ms-4">
+                <i class="bi bi-clipboard-data"></i> Histórico
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'profissional_plastica_list' %}?sublist=consulta" class="nav-link text-white ms-4">
+                <i class="bi bi-person-workspace"></i> Profissionais
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'procedimento_list' %}?sublist=consulta" class="nav-link text-white ms-4">
+                <i class="bi bi-list-ul"></i> Procedimentos
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'pre_agendamento_plastica_list' %}?sublist=consulta" class="nav-link text-white ms-4">
+                <i class="bi bi-calendar-check"></i> Pré-Agendamentos
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'pre_agendamento_plastica_calendar' %}?sublist=consulta" class="nav-link text-white ms-4">
+                <i class="bi bi-calendar3"></i> Agenda Pré-Agendamentos
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'relatorio_financeiro_plastica' %}?sublist=consulta" class="nav-link text-white ms-4">
+                <i class="bi bi-currency-dollar"></i> Relatórios
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <!-- CONTRATOS -->
+      <li class="nav-item mb-1">
+        <a href="#" class="nav-link d-flex align-items-center no-click">
+          <i class="bi bi-file-text fs-5"></i>
+          <span>Contratos</span>
+          <i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <div id="sublist-contratos" class="sublist">
+          <ul class="list-unstyled fw-normal pb-1 small">
+            <li>
+              <a href="{% url 'contrato_plastica_list' %}?sublist=contratos" class="nav-link text-white ms-4">
+                <i class="bi bi-folder2"></i> Listar Contratos
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'relatorio_financeiro_contrato' %}?sublist=contratos" class="nav-link text-white ms-4">
+                <i class="bi bi-currency-dollar"></i> Relatórios
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <div class="content">
+    
+  </div>
+
+  <!-- Bootstrap JS (inclui Popper) -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"
+  ></script>
+
+  <script>
+    // Ao carregar a página, lê o parâmetro ?sublist=XYZ e abre a sublista correspondente.
+    document.addEventListener('DOMContentLoaded', function() {
+      const params = new URLSearchParams(window.location.search);
+      const sublist = params.get('sublist');
+      if (!sublist || sublist === 'none') return;
+      const targetDiv = document.getElementById('sublist-' + sublist);
+      if (targetDiv) {
+        targetDiv.classList.add('show');
+      }
+      const topLink = document.querySelector('.top-nav-link[data-section="' + sublist + '"]');
+      if (topLink) {
+        topLink.classList.add('active');
+      }
+    });
+  </script>
+
+</body>
+</html>
