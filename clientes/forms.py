@@ -23,21 +23,18 @@ class RegistroClientesForm(forms.ModelForm):
     )
 
     rg = forms.CharField(
-        max_length=13,
-        min_length=13,
         required=True,
         widget=forms.TextInput(attrs={
             'class': 'form-control rg-mask',
-            'placeholder': 'RG XXX.XXX.XXX-X'
+            'placeholder': 'RG XXX.XXX.XXX ou XXX.XXX.XXX-X'
         }),
         validators=[RegexValidator(
-            r'^\d{3}\.\d{3}\.\d{3}\-\d{1}$',
-            'O RG deve estar no formato XXX.XXX.XXX-X.'
+            # Aceita "XXX.XXX.XXX" (9 dígitos) ou "XXX.XXX.XXX-X" (10 dígitos)
+            r'^\d{3}\.\d{3}\.\d{3}(?:-\d)?$',
+            'O RG deve estar no formato XXX.XXX.XXX ou XXX.XXX.XXX-X.'
         )],
         error_messages={
             'required': 'O RG é obrigatório.',
-            'max_length': 'O RG deve ter exatamente 13 caracteres (com formatação).',
-            'min_length': 'O RG deve ter exatamente 13 caracteres (com formatação).',
         }
     )
 
@@ -121,7 +118,7 @@ class RegistroClientesForm(forms.ModelForm):
     )
 
     email = forms.EmailField(
-        required=True,
+        required=False,
         widget=forms.EmailInput(attrs={
             'class': 'form-control',
             'placeholder': 'Digite o e-mail'
