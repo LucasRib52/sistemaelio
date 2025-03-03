@@ -75,6 +75,14 @@ class ClienteCreateView(LoginRequiredMixin, CreateView):
     def form_invalid(self, form):
         messages.error(self.request, 'Erro ao registrar cliente. Verifique os campos e tente novamente.')
         return self.render_to_response(self.get_context_data(form=form))
+    
+    def get_initial(self):
+        initial = super().get_initial()
+        # Preenche o campo 'name' com o valor passado via GET em 'nome'
+        # e o campo 'telefone' com o valor passado via GET em 'celular'
+        initial['name'] = self.request.GET.get('nome', '')
+        initial['telefone'] = self.request.GET.get('celular', '')
+        return initial
 
 
 # View para visualizar detalhes do cliente

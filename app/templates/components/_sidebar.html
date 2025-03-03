@@ -319,7 +319,7 @@
 
   <!-- CONTEÚDO PRINCIPAL -->
   <div class="content">
-    
+    <!-- Aqui vai o conteúdo dinâmico da página -->
   </div>
 
   <!-- Bootstrap JS (inclui Popper) -->
@@ -330,11 +330,20 @@
   ></script>
 
   <script>
-    // Ao carregar a página, lê o parâmetro ?sublist=XYZ e abre a sublista correspondente.
-    document.addEventListener('DOMContentLoaded', function() {
+    // Função para obter o parâmetro "sublist" da URL ou do localStorage
+    function getActiveSublist() {
       const params = new URLSearchParams(window.location.search);
-      const sublist = params.get('sublist');
-      if (!sublist || sublist === 'none') return;
+      let sublist = params.get('sublist');
+      if (sublist && sublist !== 'none') {
+        localStorage.setItem('activeSublist', sublist);
+        return sublist;
+      }
+      return localStorage.getItem('activeSublist');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const sublist = getActiveSublist();
+      if (!sublist) return;
       const targetDiv = document.getElementById('sublist-' + sublist);
       if (targetDiv) {
         targetDiv.classList.add('show');

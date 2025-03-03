@@ -30,7 +30,7 @@
                     <option value="">Status</option>
                     <option value="1" {% if request.GET.status == "1" %}selected{% endif %}>Confirmado</option>
                     <option value="2" {% if request.GET.status == "2" %}selected{% endif %}>Reagendado</option>
-                    <option value="3" {% if request.GET.status == "3" %}selected{% endif %}>Desmarcado</option>
+                    <option value="3" {% if request.GET.status == "3" %}selected{% endif %}>Cancelado</option>
                     <option value="4" {% if request.GET.status == "4" %}selected{% endif %}>Sem Resposta</option>
                 </select>
             </div>

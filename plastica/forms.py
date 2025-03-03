@@ -97,12 +97,13 @@ class PreAgendamentoPlasticaForm(forms.ModelForm):
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do Cliente'}),
             'celular': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Celular (com DDD)'}),
-            'data_agendamento': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'data_consulta': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'data_agendamento': forms.DateInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'type': 'date'}),
+            'data_consulta': forms.DateInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'type': 'date'}),
             'horario': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
             'procedimento': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o procedimento'}),
             'observacoes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Observações'}),
         }
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -120,7 +121,7 @@ class PreAgendamentoPlasticaUpdateStatusForm(forms.ModelForm):
     STATUS_CHOICES = [
         (1, 'Confirmado'),
         (2, 'Reagendado'),
-        (3, 'Desmarcado'),
+        (3, 'Cancelado'),
         (4, 'Sem Resposta'),
     ]
 
