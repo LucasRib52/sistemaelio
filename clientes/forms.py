@@ -6,7 +6,7 @@ class RegistroClientesForm(forms.ModelForm):
     cpf = forms.CharField(
         max_length=14,
         min_length=14,
-        required=True,
+        required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control cpf-mask',
             'placeholder': 'CPF XXX.XXX.XXX-XX'
@@ -41,7 +41,7 @@ class RegistroClientesForm(forms.ModelForm):
     telefone = forms.CharField(
         max_length=15,
         min_length=15,
-        required=True,
+        required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control telefone-mask',
             'placeholder': 'FONE (XX) XXXXX-XXXX'
@@ -74,7 +74,7 @@ class RegistroClientesForm(forms.ModelForm):
     cep = forms.CharField(
         max_length=9,
         min_length=9,
-        required=True,
+        required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control cep-mask',
             'placeholder': 'CEP XXXXX-XXX'
@@ -102,7 +102,7 @@ class RegistroClientesForm(forms.ModelForm):
 
     numero = forms.CharField(
         max_length=6,
-        required=True,
+        required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Número'
