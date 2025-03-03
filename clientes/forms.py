@@ -23,7 +23,7 @@ class RegistroClientesForm(forms.ModelForm):
     )
 
     rg = forms.CharField(
-        required=True,
+        required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control rg-mask',
             'placeholder': 'RG XXX.XXX.XXX ou XXX.XXX.XXX-X'

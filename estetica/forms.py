@@ -130,12 +130,12 @@ class PreAgendamentoForm(forms.ModelForm):
             'data_agendamento': forms.DateInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'type': 'date'}),
             'data_consulta': forms.DateInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'type': 'date'}),
             'horario': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
-            'procedimento': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o procedimento'}),
+            'procedimento': forms.Select(attrs={'class': 'form-control'}),
             'observacoes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Observações'}),
         }
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)       
         # Define automaticamente o status inicial para "Sem Resposta"
         if not self.instance.pk:
             self.instance.posicao_agendamento = 4

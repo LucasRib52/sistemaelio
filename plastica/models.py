@@ -115,7 +115,7 @@ class PreAgendamentoPlastica(models.Model):
     STATUS_CHOICES = [
         (1, 'Confirmado'),
         (2, 'Reagendado'),
-        (3, 'Desmarcado'),
+        (3, 'Cancelado'),
         (4, 'Sem Resposta'),
     ]
     
