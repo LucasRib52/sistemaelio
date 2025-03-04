@@ -102,11 +102,11 @@
                                        class="btn btn-success btn-sm fw-bold">
                                         <i class="bi bi-person-plus-fill"></i> Criar Cadastro
                                     </a>
-                                    <!-- Se não for confirmado, mantém botão "Atualizar Status" -->
-                                    <a href="{% url 'pre_agendamento_plastica_update_status' agendamento.pk %}" class="btn btn-info btn-sm">
-                                        <i class="bi bi-arrow-repeat"></i> Atualizar Status
-                                    </a>
                                 {% endif %}
+                                <!-- Botão Atualizar Status sempre aparece -->
+                                <a href="{% url 'pre_agendamento_plastica_update_status' agendamento.pk %}" class="btn btn-info btn-sm">
+                                    <i class="bi bi-arrow-repeat"></i> Atualizar Status
+                                </a>
                                 <!-- Editar e Excluir sempre aparecem -->
                                 <a href="{% url 'pre_agendamento_plastica_update' agendamento.pk %}" class="btn btn-warning btn-sm">
                                     <i class="bi bi-pencil-square"></i> Editar

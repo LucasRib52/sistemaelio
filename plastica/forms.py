@@ -117,6 +117,8 @@ class PreAgendamentoPlasticaForm(forms.ModelForm):
             raise forms.ValidationError("Informe um número de celular válido com DDD.")
         return celular
 
+# forms.py
+
 class PreAgendamentoPlasticaUpdateStatusForm(forms.ModelForm):
     STATUS_CHOICES = [
         (1, 'Confirmado'),
@@ -124,16 +126,24 @@ class PreAgendamentoPlasticaUpdateStatusForm(forms.ModelForm):
         (3, 'Cancelado'),
         (4, 'Sem Resposta'),
     ]
-
+    
     posicao_agendamento = forms.ChoiceField(
         choices=STATUS_CHOICES,
-        widget=forms.Select(attrs={'class': 'form-control'}),
+        widget=forms.Select(attrs={'class': 'form-control', 'id': 'id_posicao_agendamento'}),
         label="Status do Agendamento"
     )
-
+    
+    ja_e_cliente = forms.ChoiceField(
+         choices=[('sim', 'Sim'), ('nao', 'Não')],
+         widget=forms.RadioSelect,
+         label="Já é Cliente?",
+         required=False
+    )
+    
     class Meta:
-        model = PreAgendamentoPlastica
-        fields = ['posicao_agendamento']
+         model = PreAgendamentoPlastica
+         fields = ['posicao_agendamento', 'ja_e_cliente']
+
 
 
 

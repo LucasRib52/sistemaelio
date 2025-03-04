@@ -275,10 +275,10 @@ class PreAgendamentoPlasticaListView(LoginRequiredMixin, ListView):
     model = PreAgendamentoPlastica
     template_name = 'pre_agendamento/pre_agendamento_plastica_list.html'
     context_object_name = 'pre_agendamentos'
-    paginate_by = 10
+    paginate_by = 10    
 
     def get_queryset(self):
-        queryset = super().get_queryset().select_related('cliente')  # 🔹 Agora carrega o cliente corretamente
+        queryset = super().get_queryset().select_related('cliente')
         query = self.request.GET.get('q', '').strip()
         date_filter = self.request.GET.get('date_filter', '')
         status = self.request.GET.get('status', '')
@@ -297,7 +297,8 @@ class PreAgendamentoPlasticaListView(LoginRequiredMixin, ListView):
         if status:
             queryset = queryset.filter(posicao_agendamento=status)
 
-        return queryset
+        # Ordena automaticamente pela data da consulta e, dentro do mesmo dia, pelo horário
+        return queryset.order_by('data_consulta', 'horario')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -332,9 +333,18 @@ class PreAgendamentoPlasticaUpdateStatusView(LoginRequiredMixin, UpdateView):
         nova_data_consulta = self.request.POST.get('nova_data_consulta')
         novo_horario = self.request.POST.get('novo_horario')
 
+        # Se o status for "Reagendado" (valor 2) e os campos de nova data/hora forem preenchidos
         if form.cleaned_data['posicao_agendamento'] == '2' and nova_data_consulta and novo_horario:
             pre_agendamento.data_consulta = nova_data_consulta
             pre_agendamento.horario = novo_horario
+
+        # Se o status for "Confirmado" (valor 1) e o usuário indicar que já é cliente
+        if form.cleaned_data['posicao_agendamento'] == '1' and form.cleaned_data.get('ja_e_cliente') == 'sim':
+            from clientes.models import RegistroClientes
+            # Exemplo: busca por cliente utilizando o número de celular
+            cliente_existente = RegistroClientes.objects.filter(telefone=pre_agendamento.celular).first()
+            if cliente_existente:
+                pre_agendamento.cliente = cliente_existente
 
         pre_agendamento.save()
         return super().form_valid(form)

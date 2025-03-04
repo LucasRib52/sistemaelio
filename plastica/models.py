@@ -127,6 +127,9 @@ class PreAgendamentoPlastica(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
+    
+    class Meta:
+        ordering = ['data_consulta', 'horario']
 
     def __str__(self):
         return f"Pré-agendamento {self.nome} - {self.procedimento} - {self.data_agendamento.strftime('%d/%m/%Y')}"
