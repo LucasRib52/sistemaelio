@@ -7,7 +7,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 import json
+from django.utils import timezone
 from django.http import HttpResponse
+from django.db.models import Case, When, IntegerField
 import pandas as pd
 from collections import defaultdict
 import xlsxwriter
@@ -275,7 +277,7 @@ class PreAgendamentoPlasticaListView(LoginRequiredMixin, ListView):
     model = PreAgendamentoPlastica
     template_name = 'pre_agendamento/pre_agendamento_plastica_list.html'
     context_object_name = 'pre_agendamentos'
-    paginate_by = 10    
+    paginate_by = 10
 
     def get_queryset(self):
         queryset = super().get_queryset().select_related('cliente')
@@ -297,8 +299,20 @@ class PreAgendamentoPlasticaListView(LoginRequiredMixin, ListView):
         if status:
             queryset = queryset.filter(posicao_agendamento=status)
 
-        # Ordena automaticamente pela data da consulta e, dentro do mesmo dia, pelo horário
-        return queryset.order_by('data_consulta', 'horario')
+        # Obter o mês atual (ex: se estiver em dezembro, current_month será 12)
+        current_month = timezone.now().month
+
+        # Anota os registros: prioridade 0 se data_consulta for do mês atual, ou 1 para os demais
+        queryset = queryset.annotate(
+            prioridade=Case(
+                When(data_consulta__month=current_month, then=0),
+                default=1,
+                output_field=IntegerField()
+            )
+        )
+
+        # Ordena primeiramente pela prioridade, depois pela data_consulta e pelo horário
+        return queryset.order_by('prioridade', 'data_consulta', 'horario')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -306,7 +320,6 @@ class PreAgendamentoPlasticaListView(LoginRequiredMixin, ListView):
         context['date_filter'] = self.request.GET.get('date_filter', '')
         context['status'] = self.request.GET.get('status', '')
         return context
-
 
 # View para editar um pré-agendamento de Plástica
 class PreAgendamentoPlasticaUpdateView(LoginRequiredMixin, UpdateView):
